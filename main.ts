@@ -1,3 +1,10 @@
+function switch_hotbarinventory () {
+    if (hotbar_selected) {
+        hotbar_selected = false
+    } else {
+        hotbar_selected = false
+    }
+}
 function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
     if (characterAnimations.matchesRule(mySprite, characterAnimations.rule(Predicate.FacingUp))) {
         tiles.setTileAt(mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Top), myImage)
@@ -13,11 +20,14 @@ function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
         tiles.setWallAt(mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Left), wall)
     }
 }
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (inventory_not_open) {
+    	
+    }
+})
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (!(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "")) {
-        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
-            place_tile_facing(mySprite, assets.tile`myTile`, false)
-        }
+    if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
+        place_tile_facing(mySprite, assets.tile`myTile`, false)
     }
 })
 function character_animation () {
@@ -207,10 +217,10 @@ function character_animation () {
     )
 }
 controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (inventory_open) {
-        inventory_open = false
-    } else if (!(inventory_open)) {
-        inventory_open = true
+    if (inventory_not_open) {
+        inventory_not_open = false
+    } else if (!(inventory_not_open)) {
+        inventory_not_open = true
     }
 })
 function create_all_items_array () {
@@ -234,7 +244,7 @@ function create_all_items_array () {
         . . 7 . . . . . . . . . . . . . 
         `, "Use this tool to till soil."),
     Inventory.create_item("Carrot Seeds", assets.image`carrot seeds`, "Plant these in tilled soil to produce carrots! Takes 3 days to grow"),
-    Inventory.create_item("", img`
+    Inventory.create_item("empty", img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -272,8 +282,9 @@ function create_all_items_array () {
         `)
     ]
 }
-let inventory_open = false
+let hotbar_selected = false
 let all_items: Inventory.Item[] = []
+let inventory_not_open = false
 let toolbar: Inventory.Toolbar = null
 let mySprite: Sprite = null
 tiles.setCurrentTilemap(tilemap`level3`)
@@ -306,7 +317,7 @@ toolbar.set_color(ToolbarColorAttribute.BoxText, 15)
 toolbar.setFlag(SpriteFlag.RelativeToCamera, true)
 toolbar.setPosition(80, 108)
 create_all_items_array()
-let toolbar_items = [all_items[0]]
+let toolbar_items: Inventory.Item[] = []
 let inventory = Inventory.create_inventory([], 32)
 inventory.set_color(InventoryColorAttribute.InventoryOutline, 15)
 inventory.set_color(InventoryColorAttribute.InventorySelectedOutline, 8)
@@ -315,10 +326,16 @@ inventory.set_color(InventoryColorAttribute.InventoryText, 15)
 inventory.setFlag(SpriteFlag.RelativeToCamera, true)
 inventory.left = 4
 inventory.top = 4
-let inventory_items = [all_items[1]]
-inventory_open = false
+let inventory_items: Inventory.Item[] = []
+inventory_not_open = false
+for (let index = 0; index <= 31; index++) {
+    inventory_items[index] = all_items[2]
+}
+for (let index = 0; index <= 6; index++) {
+    toolbar_items[index] = all_items[2]
+}
 forever(function () {
-    if (inventory_open) {
+    if (inventory_not_open) {
         if (controller.B.isPressed()) {
             controller.moveSprite(mySprite, 0, 0)
             if (controller.left.isPressed()) {
@@ -336,10 +353,12 @@ forever(function () {
         } else {
             controller.moveSprite(mySprite, 100, 100)
         }
+    } else {
+        controller.moveSprite(mySprite, 0, 0)
     }
 })
 forever(function () {
     toolbar.set_items(toolbar_items)
     inventory.set_items(inventory_items)
-    inventory.setFlag(SpriteFlag.Invisible, inventory_open)
+    inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
 })
