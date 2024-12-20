@@ -2,13 +2,23 @@
     "name": "farm life ",
     "description": "",
     "dependencies": {
-        "device": "*"
+        "device": "*",
+        "Inventory": "github:UnsignedArduino/Inventory#v1.1.1",
+        "Timers": "github:microsoft/arcade-timers#v1.1.0",
+        "arcade-character-animations": "github:microsoft/arcade-character-animations#v0.0.2",
+        "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.2.1",
+        "arcade-tile-util": "github:microsoft/arcade-tile-util#v1.2.0",
+        "BetterSettings": "github:sargedev/bettersettings#2023.5.1"
     },
     "files": [
         "main.blocks",
         "main.ts",
         "README.md",
-        "assets.json"
+        "assets.json",
+        "images.g.jres",
+        "images.g.ts",
+        "tilemap.g.jres",
+        "tilemap.g.ts"
     ],
     "testFiles": [
         "test.ts"
@@ -20,5 +30,23 @@
     "supportedTargets": [
         "arcade"
     ],
-    "preferredEditor": "blocksprj"
+    "preferredEditor": "blocksprj",
+    "palette": [
+        "#000000",
+        "#F2FBEB",
+        "#32761B",
+        "#4D9F24",
+        "#77BC2C",
+        "#E6B991",
+        "#C4692D",
+        "#80451E",
+        "#8DE4E2",
+        "#4BACD6",
+        "#274BAB",
+        "#D03756",
+        "#CF7932",
+        "#D9D95B",
+        "#AE29B6",
+        "#363636"
+    ]
 }
