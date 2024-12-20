@@ -21,8 +21,8 @@ function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
     }
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (inventory_not_open) {
-    	
+    if (!(inventory_not_open)) {
+        switch_hotbarinventory()
     }
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -242,8 +242,8 @@ function create_all_items_array () {
         . . 7 7 7 . . . . . . . . . . . 
         . 7 7 7 . . . . . . . . . . . . 
         . . 7 . . . . . . . . . . . . . 
-        `, "Use this tool to till soil."),
-    Inventory.create_item("Carrot Seeds", assets.image`carrot seeds`, "Plant these in tilled soil to produce carrots! Takes 3 days to grow"),
+        `, "0"),
+    Inventory.create_item("Carrot Seeds", assets.image`carrot seeds`, "1"),
     Inventory.create_item("empty", img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -261,7 +261,7 @@ function create_all_items_array () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        `),
+        `, "2"),
     Inventory.create_item("", img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -279,9 +279,10 @@ function create_all_items_array () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        `)
+        `, "3")
     ]
 }
+let temp_item: Inventory.Item = null
 let hotbar_selected = false
 let all_items: Inventory.Item[] = []
 let inventory_not_open = false
@@ -327,13 +328,55 @@ inventory.setFlag(SpriteFlag.RelativeToCamera, true)
 inventory.left = 4
 inventory.top = 4
 let inventory_items: Inventory.Item[] = []
-inventory_not_open = false
+inventory_not_open = true
 for (let index = 0; index <= 31; index++) {
-    inventory_items[index] = all_items[2]
+    inventory_items[0] = all_items[2]
 }
 for (let index = 0; index <= 6; index++) {
     toolbar_items[index] = all_items[2]
 }
+inventory_items[0] = all_items[1]
+forever(function () {
+    if (!(inventory_not_open)) {
+        if (hotbar_selected) {
+            if (controller.left.isPressed()) {
+                toolbar.change_number(ToolbarNumberAttribute.SelectedIndex, -1)
+                pauseUntil(() => !(controller.left.isPressed()))
+            } else if (controller.right.isPressed()) {
+                toolbar.change_number(ToolbarNumberAttribute.SelectedIndex, 1)
+                pauseUntil(() => !(controller.right.isPressed()))
+            }
+        } else {
+            if (controller.left.isPressed()) {
+                inventory.change_number(InventoryNumberAttribute.SelectedIndex, -1)
+                pauseUntil(() => !(controller.left.isPressed()))
+            } else if (controller.right.isPressed()) {
+                inventory.change_number(InventoryNumberAttribute.SelectedIndex, 1)
+                pauseUntil(() => !(controller.right.isPressed()))
+            } else if (controller.up.isPressed()) {
+                if (inventory.get_number(InventoryNumberAttribute.SelectedIndex) > 8) {
+                    inventory.change_number(InventoryNumberAttribute.SelectedIndex, -8)
+                    pauseUntil(() => !(controller.up.isPressed()))
+                } else {
+                    inventory.set_number(InventoryNumberAttribute.SelectedIndex, 0)
+                }
+            } else if (controller.down.isPressed()) {
+                if (inventory.get_number(InventoryNumberAttribute.SelectedIndex) < 24) {
+                    inventory.change_number(InventoryNumberAttribute.SelectedIndex, 8)
+                    pauseUntil(() => !(controller.down.isPressed()))
+                } else {
+                    inventory.set_number(InventoryNumberAttribute.SelectedIndex, 31)
+                }
+            }
+            if (controller.A.isPressed()) {
+                temp_item = toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]
+                toolbar_items[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)] = inventory.get_items()[inventory.get_number(InventoryNumberAttribute.SelectedIndex)]
+                inventory_items[inventory.get_number(InventoryNumberAttribute.SelectedIndex)] = temp_item
+                pauseUntil(() => !(controller.A.isPressed()))
+            }
+        }
+    }
+})
 forever(function () {
     if (inventory_not_open) {
         if (controller.B.isPressed()) {
@@ -358,7 +401,16 @@ forever(function () {
     }
 })
 forever(function () {
+    inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
     toolbar.set_items(toolbar_items)
     inventory.set_items(inventory_items)
-    inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
+})
+forever(function () {
+    if (!(inventory_not_open)) {
+        if (hotbar_selected) {
+        	
+        }
+    } else {
+    	
+    }
 })
