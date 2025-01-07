@@ -1,8 +1,13 @@
 function switch_hotbarinventory () {
     if (hotbar_selected) {
+        inventory.set_number(InventoryNumberAttribute.SelectedIndex, actuall_slot)
+        actuall_slot = toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)
+        toolbar.set_number(ToolbarNumberAttribute.SelectedIndex, -1)
         hotbar_selected = false
     } else {
-        hotbar_selected = false
+        toolbar.set_number(ToolbarNumberAttribute.SelectedIndex, actuall_slot)
+        actuall_slot = toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)
+        hotbar_selected = true
     }
 }
 function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
@@ -26,8 +31,10 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
-        place_tile_facing(mySprite, assets.tile`myTile`, false)
+    if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
+        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
+            place_tile_facing(mySprite, assets.tile`myTile`, false)
+        }
     }
 })
 function character_animation () {
@@ -216,7 +223,14 @@ function character_animation () {
     characterAnimations.rule(Predicate.FacingUp)
     )
 }
+function toolbarinventory_update () {
+    toolbar.set_items(toolbar_items)
+    inventory.set_items(inventory_items)
+    toolbar.update()
+    inventory.update()
+}
 controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
+    toolbarinventory_update()
     if (inventory_not_open) {
         inventory_not_open = false
     } else if (!(inventory_not_open)) {
@@ -282,10 +296,68 @@ function create_all_items_array () {
         `, "3")
     ]
 }
+function menu_movement_code () {
+    if (!(inventory_not_open)) {
+        if (hotbar_selected) {
+            if (controller.left.isPressed()) {
+                if (toolbar_items[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex) + -1]) {
+                    toolbar.change_number(ToolbarNumberAttribute.SelectedIndex, -1)
+                    pauseUntil(() => !(controller.left.isPressed()))
+                }
+            } else if (controller.right.isPressed()) {
+                if (toolbar_items[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex) + 1]) {
+                    toolbar.change_number(ToolbarNumberAttribute.SelectedIndex, 1)
+                    pauseUntil(() => !(controller.right.isPressed()))
+                }
+            }
+        } else {
+            if (controller.left.isPressed()) {
+                if (inventory_items[inventory.get_number(InventoryNumberAttribute.SelectedIndex) + -1]) {
+                    inventory.change_number(InventoryNumberAttribute.SelectedIndex, -1)
+                    pauseUntil(() => !(controller.left.isPressed()))
+                }
+            } else if (controller.right.isPressed()) {
+                if (inventory_items[inventory.get_number(InventoryNumberAttribute.SelectedIndex) + 1]) {
+                    inventory.change_number(InventoryNumberAttribute.SelectedIndex, 1)
+                    pauseUntil(() => !(controller.right.isPressed()))
+                }
+            } else if (controller.up.isPressed()) {
+                if (inventory.get_number(InventoryNumberAttribute.SelectedIndex) > 8) {
+                    if (inventory_items[inventory.get_number(InventoryNumberAttribute.SelectedIndex) + -8]) {
+                        inventory.change_number(InventoryNumberAttribute.SelectedIndex, -8)
+                        pauseUntil(() => !(controller.up.isPressed()))
+                    }
+                } else {
+                    inventory.set_number(InventoryNumberAttribute.SelectedIndex, 0)
+                }
+            } else if (controller.down.isPressed()) {
+                if (inventory.get_number(InventoryNumberAttribute.SelectedIndex) < 24) {
+                    if (inventory_items[inventory.get_number(InventoryNumberAttribute.SelectedIndex) + 8]) {
+                        inventory.change_number(InventoryNumberAttribute.SelectedIndex, 8)
+                        pauseUntil(() => !(controller.down.isPressed()))
+                    }
+                } else {
+                    inventory.set_number(InventoryNumberAttribute.SelectedIndex, 31)
+                }
+            }
+            if (controller.A.isPressed()) {
+                temp_item = toolbar_items[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]
+                toolbar_items[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)] = inventory_items[inventory.get_number(InventoryNumberAttribute.SelectedIndex)]
+                inventory_items[inventory.get_number(InventoryNumberAttribute.SelectedIndex)] = temp_item
+                pauseUntil(() => !(controller.A.isPressed()))
+            }
+        }
+        toolbarinventory_update()
+    }
+}
 let temp_item: Inventory.Item = null
+let actuall_slot = 0
 let hotbar_selected = false
-let all_items: Inventory.Item[] = []
 let inventory_not_open = false
+let inventory_items: Inventory.Item[] = []
+let inventory: Inventory.Inventory = null
+let all_items: Inventory.Item[] = []
+let toolbar_items: Inventory.Item[] = []
 let toolbar: Inventory.Toolbar = null
 let mySprite: Sprite = null
 tiles.setCurrentTilemap(tilemap`level3`)
@@ -318,8 +390,8 @@ toolbar.set_color(ToolbarColorAttribute.BoxText, 15)
 toolbar.setFlag(SpriteFlag.RelativeToCamera, true)
 toolbar.setPosition(80, 108)
 create_all_items_array()
-let toolbar_items: Inventory.Item[] = []
-let inventory = Inventory.create_inventory([], 32)
+toolbar_items = [all_items[0]]
+inventory = Inventory.create_inventory([], 32)
 inventory.set_color(InventoryColorAttribute.InventoryOutline, 15)
 inventory.set_color(InventoryColorAttribute.InventorySelectedOutline, 8)
 inventory.set_color(InventoryColorAttribute.InventoryBackground, 1)
@@ -327,55 +399,11 @@ inventory.set_color(InventoryColorAttribute.InventoryText, 15)
 inventory.setFlag(SpriteFlag.RelativeToCamera, true)
 inventory.left = 4
 inventory.top = 4
-let inventory_items: Inventory.Item[] = []
+inventory_items = [all_items[1]]
 inventory_not_open = true
-for (let index = 0; index <= 31; index++) {
-    inventory_items[0] = all_items[2]
-}
-for (let index = 0; index <= 6; index++) {
-    toolbar_items[index] = all_items[2]
-}
-inventory_items[0] = all_items[1]
+toolbarinventory_update()
 forever(function () {
-    if (!(inventory_not_open)) {
-        if (hotbar_selected) {
-            if (controller.left.isPressed()) {
-                toolbar.change_number(ToolbarNumberAttribute.SelectedIndex, -1)
-                pauseUntil(() => !(controller.left.isPressed()))
-            } else if (controller.right.isPressed()) {
-                toolbar.change_number(ToolbarNumberAttribute.SelectedIndex, 1)
-                pauseUntil(() => !(controller.right.isPressed()))
-            }
-        } else {
-            if (controller.left.isPressed()) {
-                inventory.change_number(InventoryNumberAttribute.SelectedIndex, -1)
-                pauseUntil(() => !(controller.left.isPressed()))
-            } else if (controller.right.isPressed()) {
-                inventory.change_number(InventoryNumberAttribute.SelectedIndex, 1)
-                pauseUntil(() => !(controller.right.isPressed()))
-            } else if (controller.up.isPressed()) {
-                if (inventory.get_number(InventoryNumberAttribute.SelectedIndex) > 8) {
-                    inventory.change_number(InventoryNumberAttribute.SelectedIndex, -8)
-                    pauseUntil(() => !(controller.up.isPressed()))
-                } else {
-                    inventory.set_number(InventoryNumberAttribute.SelectedIndex, 0)
-                }
-            } else if (controller.down.isPressed()) {
-                if (inventory.get_number(InventoryNumberAttribute.SelectedIndex) < 24) {
-                    inventory.change_number(InventoryNumberAttribute.SelectedIndex, 8)
-                    pauseUntil(() => !(controller.down.isPressed()))
-                } else {
-                    inventory.set_number(InventoryNumberAttribute.SelectedIndex, 31)
-                }
-            }
-            if (controller.A.isPressed()) {
-                temp_item = toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]
-                toolbar_items[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)] = inventory.get_items()[inventory.get_number(InventoryNumberAttribute.SelectedIndex)]
-                inventory_items[inventory.get_number(InventoryNumberAttribute.SelectedIndex)] = temp_item
-                pauseUntil(() => !(controller.A.isPressed()))
-            }
-        }
-    }
+    menu_movement_code()
 })
 forever(function () {
     if (inventory_not_open) {
@@ -402,15 +430,4 @@ forever(function () {
 })
 forever(function () {
     inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
-    toolbar.set_items(toolbar_items)
-    inventory.set_items(inventory_items)
-})
-forever(function () {
-    if (!(inventory_not_open)) {
-        if (hotbar_selected) {
-        	
-        }
-    } else {
-    	
-    }
 })
