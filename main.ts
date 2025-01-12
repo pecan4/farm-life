@@ -24,7 +24,7 @@ function read_plant_data (text: string) {
     sprites.setDataNumber(plant_sprite, "type", parseFloat(tempreadvar[0]))
     sprites.setDataNumber(plant_sprite, "grow cycles", parseFloat(tempreadvar[1]))
     sprites.setDataNumber(plant_sprite, "last day watered", parseFloat(tempreadvar[2]))
-    plant_sprite.setImage(plant_images_array[parseFloat(tempreadvar[0]) * 4 + parseFloat(tempreadvar[4])])
+    plant_sprite.setImage(plant_images_array2[parseFloat(tempreadvar[0]) * 4 + parseFloat(tempreadvar[4])])
     sprites.setDataNumber(plant_sprite, "stage", parseFloat(tempreadvar[4]))
     tiles.placeOnTile(plant_sprite, tiles.getTileLocation(parseFloat(tempreadvar[3].split(".")[0]), parseFloat(tempreadvar[3].split(".")[1])))
 }
@@ -34,24 +34,51 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 function switch_hotbarinventory () {
-    if (hotbar_selected) {
-        inventory.set_number(InventoryNumberAttribute.SelectedIndex, actuall_slot)
-        actuall_slot = toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)
-        toolbar.set_number(ToolbarNumberAttribute.SelectedIndex, -1)
-        hotbar_selected = false
-    } else {
-        toolbar.set_number(ToolbarNumberAttribute.SelectedIndex, actuall_slot)
-        actuall_slot = toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)
-        hotbar_selected = true
+    if (!(inventory_not_open)) {
+        if (hotbar_selected) {
+            toolbar.set_color(ToolbarColorAttribute.BoxSelectedOutline, 15)
+            inventory.set_color(InventoryColorAttribute.InventorySelectedOutline, 8)
+            hotbar_selected = false
+        } else {
+            inventory.set_color(InventoryColorAttribute.InventorySelectedOutline, 1)
+            toolbar.set_color(ToolbarColorAttribute.BoxSelectedOutline, 8)
+            hotbar_selected = true
+        }
     }
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
-        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
-            place_tile_facing(mySprite, assets.tile`myTile`, false)
+    if (inventory_not_open) {
+        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
+            if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
+                place_tile_facing(mySprite, assets.tile`myTile`, false)
+            }
         }
     }
 })
+function plant_images_array () {
+    plant_images_array2 = [
+    assets.image`carrot s1`,
+    assets.image`carrot s2`,
+    assets.image`carrot s3`,
+    assets.image`carrot s4`,
+    assets.image`green bean 1`,
+    assets.image`green bean 2`,
+    assets.image`green bean 3`,
+    assets.image`green bean 4`,
+    assets.image`tomato 1`,
+    assets.image`tomato 2`,
+    assets.image`tomato 3`,
+    assets.image`tomato 4`,
+    assets.image`broccoli 1`,
+    assets.image`broccoli 2`,
+    assets.image`broccoli 3`,
+    assets.image`broccoli 4`,
+    assets.image`pepper 1`,
+    assets.image`pepper 2`,
+    assets.image`pepper 3`,
+    assets.image`pepper 4`
+    ]
+}
 function compress_plant_data (mySprite: Sprite) {
     return "" + sprites.readDataNumber(mySprite, "type") + "," + sprites.readDataNumber(mySprite, "grow cycles") + "," + sprites.readDataNumber(mySprite, "last day watered") + "," + ("" + mySprite.tilemapLocation().column + "." + mySprite.tilemapLocation().row) + "," + sprites.readDataNumber(mySprite, "stage")
 }
@@ -128,6 +155,19 @@ function menu_movement_code () {
                     pauseUntil(() => !(controller.right.isPressed()))
                 }
             }
+            if (controller.A.isPressed()) {
+                if (7 != inventory_items.length) {
+                    if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
+                        inventory_items.push(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)])
+                        toolbar_items.removeAt(toolbar.get_number(ToolbarNumberAttribute.SelectedIndex))
+                        inventory.set_items(inventory_items)
+                        inventory.update()
+                        toolbar.set_items(toolbar_items)
+                        toolbar.update()
+                        pauseUntil(() => !(controller.A.isPressed()))
+                    }
+                }
+            }
         } else {
             if (controller.left.isPressed()) {
                 if (inventory_items[inventory.get_number(InventoryNumberAttribute.SelectedIndex) + -1]) {
@@ -159,10 +199,17 @@ function menu_movement_code () {
                 }
             }
             if (controller.A.isPressed()) {
-                temp_item = toolbar_items[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]
-                toolbar_items[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)] = inventory_items[inventory.get_number(InventoryNumberAttribute.SelectedIndex)]
-                inventory_items[inventory.get_number(InventoryNumberAttribute.SelectedIndex)] = temp_item
-                pauseUntil(() => !(controller.A.isPressed()))
+                if (7 != toolbar_items.length) {
+                    if (inventory.get_items()[inventory.get_number(InventoryNumberAttribute.SelectedIndex)]) {
+                        toolbar_items.push(inventory.get_items()[inventory.get_number(InventoryNumberAttribute.SelectedIndex)])
+                        inventory_items.removeAt(inventory.get_number(InventoryNumberAttribute.SelectedIndex))
+                        inventory.set_items(inventory_items)
+                        inventory.update()
+                        toolbar.set_items(toolbar_items)
+                        toolbar.update()
+                        pauseUntil(() => !(controller.A.isPressed()))
+                    }
+                }
             }
         }
         toolbarinventory_update()
@@ -367,7 +414,7 @@ function grow () {
         }
         if (sprites.readDataNumber(value, "grow cycles") == plant_stage_instructions[sprites.readDataNumber(value, "type")][sprites.readDataNumber(value, "stage")]) {
             sprites.changeDataNumberBy(value, "stage", 1)
-            value.setImage(plant_images_array[sprites.readDataNumber(value, "type") * 4 + sprites.readDataNumber(value, "stage")])
+            value.setImage(plant_images_array2[sprites.readDataNumber(value, "type") * 4 + sprites.readDataNumber(value, "stage")])
         }
     }
 }
@@ -377,6 +424,9 @@ controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
         inventory_not_open = false
     } else {
         inventory_not_open = true
+        inventory.set_color(InventoryColorAttribute.InventorySelectedOutline, 1)
+        toolbar.set_color(ToolbarColorAttribute.BoxSelectedOutline, 8)
+        hotbar_selected = true
     }
 })
 function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
@@ -394,12 +444,10 @@ function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
         tiles.setWallAt(mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Left), wall)
     }
 }
-let temp_item: Inventory.Item = null
-let actuall_slot = 0
 let hotbar_selected = false
+let plant_images_array2: Image[] = []
 let plant_sprite: Sprite = null
 let tempreadvar: string[] = []
-let plant_images_array: Image[] = []
 let inventory_items: Inventory.Item[] = []
 let inventory: Inventory.Inventory = null
 let all_items: Inventory.Item[] = []
@@ -412,10 +460,12 @@ let inventory_not_open = false
 inventory_not_open = true
 plant_stage_instructions = [
 [1, 2, 3],
-[0, 1],
-[0, 0],
-[0, 0]
+[2, 3, 4],
+[1, 3, 5],
+[2, 4, 7],
+[1, 3, 4]
 ]
+plant_images_array()
 blockSettings.writeStringArray("plant array", ["0,0,0,0.0,0"])
 let plant_array = blockSettings.readStringArray("plant array")
 read_plant_data(plant_array[0])
@@ -462,10 +512,6 @@ inventory.top = 4
 inventory_items = [all_items[1]]
 inventory_not_open = true
 toolbarinventory_update()
-plant_images_array = []
-forever(function () {
-    menu_movement_code()
-})
 forever(function () {
     if (inventory_not_open) {
         if (controller.B.isPressed()) {
@@ -491,4 +537,14 @@ forever(function () {
 })
 forever(function () {
     inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
+})
+forever(function () {
+    if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
+        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
+        	
+        }
+    }
+})
+forever(function () {
+    menu_movement_code()
 })
