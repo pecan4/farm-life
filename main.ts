@@ -1,6 +1,27 @@
 namespace SpriteKind {
     export const plant = SpriteKind.create()
+    export const no_collisions = SpriteKind.create()
 }
+/**
+ * first = type
+ * 
+ * ,
+ * 
+ * second# = grow cycles
+ * 
+ * ,
+ * 
+ * third# = last day watered
+ * 
+ * ,
+ * 
+ * coordinates
+ * 
+ * ,
+ * 
+ * stage
+ */
+// fix this
 function read_plant_data (text: string) {
     tempreadvar = text.split(",")
     plant_sprite = sprites.create(img`
@@ -27,6 +48,7 @@ function read_plant_data (text: string) {
     plant_sprite.setImage(plant_images_array2[parseFloat(tempreadvar[0]) * 4 + parseFloat(tempreadvar[4])])
     sprites.setDataNumber(plant_sprite, "stage", parseFloat(tempreadvar[4]))
     tiles.placeOnTile(plant_sprite, tiles.getTileLocation(parseFloat(tempreadvar[3].split(".")[0]), parseFloat(tempreadvar[3].split(".")[1])))
+    plant_sprite.z = 100
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (!(inventory_not_open)) {
@@ -53,6 +75,17 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                 place_tile_facing(mySprite, assets.tile`myTile`, false)
             }
         }
+    }
+})
+controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
+    toolbarinventory_update()
+    if (inventory_not_open) {
+        inventory_not_open = false
+    } else {
+        inventory_not_open = true
+        inventory.set_color(InventoryColorAttribute.InventorySelectedOutline, 1)
+        toolbar.set_color(ToolbarColorAttribute.BoxSelectedOutline, 8)
+        hotbar_selected = true
     }
 })
 function plant_images_array () {
@@ -407,6 +440,30 @@ function character_animation () {
     characterAnimations.rule(Predicate.FacingUp)
     )
 }
+function selected_tile_code () {
+    if (inventory_not_open) {
+        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
+            if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
+                highlighted_tile_sprite.setFlag(SpriteFlag.Invisible, false)
+                if (characterAnimations.matchesRule(mySprite, characterAnimations.rule(Predicate.FacingUp))) {
+                    tiles.placeOnTile(highlighted_tile_sprite, mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Top))
+                } else if (characterAnimations.matchesRule(mySprite, characterAnimations.rule(Predicate.FacingRight))) {
+                    tiles.placeOnTile(highlighted_tile_sprite, mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Right))
+                } else if (characterAnimations.matchesRule(mySprite, characterAnimations.rule(Predicate.FacingDown))) {
+                    tiles.placeOnTile(highlighted_tile_sprite, mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Bottom))
+                } else if (characterAnimations.matchesRule(mySprite, characterAnimations.rule(Predicate.FacingLeft))) {
+                    tiles.placeOnTile(highlighted_tile_sprite, mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Left))
+                }
+            } else {
+                highlighted_tile_sprite.setFlag(SpriteFlag.Invisible, true)
+            }
+        } else {
+            highlighted_tile_sprite.setFlag(SpriteFlag.Invisible, true)
+        }
+    } else {
+        highlighted_tile_sprite.setFlag(SpriteFlag.Invisible, true)
+    }
+}
 function grow () {
     for (let value of sprites.allOfKind(SpriteKind.plant)) {
         if (sprites.readDataNumber(value, "last day watered") == day) {
@@ -418,17 +475,6 @@ function grow () {
         }
     }
 }
-controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
-    toolbarinventory_update()
-    if (inventory_not_open) {
-        inventory_not_open = false
-    } else {
-        inventory_not_open = true
-        inventory.set_color(InventoryColorAttribute.InventorySelectedOutline, 1)
-        toolbar.set_color(ToolbarColorAttribute.BoxSelectedOutline, 8)
-        hotbar_selected = true
-    }
-})
 function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
     if (characterAnimations.matchesRule(mySprite, characterAnimations.rule(Predicate.FacingUp))) {
         tiles.setTileAt(mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Top), myImage)
@@ -448,6 +494,7 @@ let hotbar_selected = false
 let plant_images_array2: Image[] = []
 let plant_sprite: Sprite = null
 let tempreadvar: string[] = []
+let highlighted_tile_sprite: Sprite = null
 let inventory_items: Inventory.Item[] = []
 let inventory: Inventory.Inventory = null
 let all_items: Inventory.Item[] = []
@@ -455,6 +502,7 @@ let toolbar_items: Inventory.Item[] = []
 let toolbar: Inventory.Toolbar = null
 let mySprite: Sprite = null
 let day = 0
+let list: number[] = []
 let plant_stage_instructions: number[][] = []
 let inventory_not_open = false
 inventory_not_open = true
@@ -466,9 +514,11 @@ plant_stage_instructions = [
 [1, 3, 4]
 ]
 plant_images_array()
-blockSettings.writeStringArray("plant array", ["0,0,0,0.0,0"])
+blockSettings.writeStringArray("plant array", [])
 let plant_array = blockSettings.readStringArray("plant array")
-read_plant_data(plant_array[0])
+if (0 < list.length) {
+    read_plant_data(plant_array[0])
+}
 day = 0
 tiles.setCurrentTilemap(tilemap`level3`)
 mySprite = sprites.create(img`
@@ -512,6 +562,29 @@ inventory.top = 4
 inventory_items = [all_items[1]]
 inventory_not_open = true
 toolbarinventory_update()
+highlighted_tile_sprite = sprites.create(img`
+    f f f f . . . . . . . . f f f f 
+    f . . . . . . . . . . . . . . f 
+    f . . . . . . . . . . . . . . f 
+    f . . . . . . . . . . . . . . f 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    f . . . . . . . . . . . . . . f 
+    f . . . . . . . . . . . . . . f 
+    f . . . . . . . . . . . . . . f 
+    f f f f . . . . . . . . f f f f 
+    `, SpriteKind.no_collisions)
+forever(function () {
+    inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
+    menu_movement_code()
+    selected_tile_code()
+})
 forever(function () {
     if (inventory_not_open) {
         if (controller.B.isPressed()) {
@@ -534,17 +607,4 @@ forever(function () {
     } else {
         controller.moveSprite(mySprite, 0, 0)
     }
-})
-forever(function () {
-    inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
-})
-forever(function () {
-    if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
-        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
-        	
-        }
-    }
-})
-forever(function () {
-    menu_movement_code()
 })
