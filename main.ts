@@ -3,6 +3,17 @@ namespace SpriteKind {
     export const no_collisions = SpriteKind.create()
 }
 /**
+ * 0 = carrots
+ * 
+ * 1 = green beans
+ * 
+ * 2 = tomatoes
+ * 
+ * 3 = broccoli
+ * 
+ * 4 = peppers
+ */
+/**
  * first = type
  * 
  * ,
@@ -21,7 +32,6 @@ namespace SpriteKind {
  * 
  * stage
  */
-// fix this
 function read_plant_data (text: string) {
     tempreadvar = text.split(",")
     plant_sprite = sprites.create(img`
@@ -45,7 +55,11 @@ function read_plant_data (text: string) {
     sprites.setDataNumber(plant_sprite, "type", parseFloat(tempreadvar[0]))
     sprites.setDataNumber(plant_sprite, "grow cycles", parseFloat(tempreadvar[1]))
     sprites.setDataNumber(plant_sprite, "last day watered", parseFloat(tempreadvar[2]))
-    plant_sprite.setImage(plant_images_array2[parseFloat(tempreadvar[0]) * 4 + parseFloat(tempreadvar[4])])
+    if (parseFloat(tempreadvar[0]) == 0) {
+        plant_sprite.setImage(plant_images_array2[parseFloat(tempreadvar[0]) * 4 + parseFloat(tempreadvar[4])])
+    } else {
+        plant_sprite.setImage(plant_images_array2[parseFloat(tempreadvar[0]) * 4 - 1 + parseFloat(tempreadvar[4])])
+    }
     sprites.setDataNumber(plant_sprite, "stage", parseFloat(tempreadvar[4]))
     tiles.placeOnTile(plant_sprite, tiles.getTileLocation(parseFloat(tempreadvar[3].split(".")[0]), parseFloat(tempreadvar[3].split(".")[1])))
     plant_sprite.z = 100
@@ -73,6 +87,41 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
             if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
                 place_tile_facing(mySprite, assets.tile`myTile`, false)
+            } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Carrot Seeds") {
+                plant_on_tile = true
+                for (let value of sprites.allOfKind(SpriteKind.plant)) {
+                    if (value.tilemapLocation() == highlighted_tile_sprite.tilemapLocation()) {
+                        plant_on_tile = false
+                    }
+                }
+                if (tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile`) && plant_on_tile) {
+                    plant_sprite = sprites.create(img`
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        `, SpriteKind.plant)
+                    sprites.setDataNumber(plant_sprite, "type", 0)
+                    sprites.setDataNumber(plant_sprite, "grow cycles", 0)
+                    sprites.setDataNumber(plant_sprite, "last day watered", 0)
+                    sprites.setDataNumber(plant_sprite, "stage", 0)
+                    plant_sprite.setImage(plant_images_array2[0])
+                    tiles.placeOnTile(plant_sprite, highlighted_tile_sprite.tilemapLocation())
+                }
+            } else {
+            	
             }
         }
     }
@@ -443,7 +492,7 @@ function character_animation () {
 function selected_tile_code () {
     if (inventory_not_open) {
         if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
-            if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
+            if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe" || toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Carrot Seeds") {
                 highlighted_tile_sprite.setFlag(SpriteFlag.Invisible, false)
                 if (characterAnimations.matchesRule(mySprite, characterAnimations.rule(Predicate.FacingUp))) {
                     tiles.placeOnTile(highlighted_tile_sprite, mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Top))
@@ -475,6 +524,29 @@ function grow () {
         }
     }
 }
+function inventory_not_open_hotbar_code () {
+    if (inventory_not_open) {
+        if (controller.B.isPressed()) {
+            controller.moveSprite(mySprite, 0, 0)
+            if (controller.left.isPressed()) {
+                toolbar.change_number(ToolbarNumberAttribute.SelectedIndex, -1)
+                pauseUntil(() => !(controller.left.isPressed()))
+            } else if (controller.right.isPressed()) {
+                toolbar.change_number(ToolbarNumberAttribute.SelectedIndex, 1)
+                pauseUntil(() => !(controller.right.isPressed()))
+            }
+            if (toolbar.get_number(ToolbarNumberAttribute.SelectedIndex) > 6) {
+                toolbar.set_number(ToolbarNumberAttribute.SelectedIndex, 0)
+            } else if (toolbar.get_number(ToolbarNumberAttribute.SelectedIndex) < 0) {
+                toolbar.set_number(ToolbarNumberAttribute.SelectedIndex, 6)
+            }
+        } else {
+            controller.moveSprite(mySprite, 100, 100)
+        }
+    } else {
+        controller.moveSprite(mySprite, 0, 0)
+    }
+}
 function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
     if (characterAnimations.matchesRule(mySprite, characterAnimations.rule(Predicate.FacingUp))) {
         tiles.setTileAt(mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Top), myImage)
@@ -490,6 +562,7 @@ function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
         tiles.setWallAt(mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Left), wall)
     }
 }
+let plant_on_tile = false
 let hotbar_selected = false
 let plant_images_array2: Image[] = []
 let plant_sprite: Sprite = null
@@ -542,6 +615,7 @@ mySprite = sprites.create(img`
 controller.moveSprite(mySprite)
 scene.cameraFollowSprite(mySprite)
 character_animation()
+tiles.placeOnTile(mySprite, tiles.getTileLocation(4, 10))
 toolbar = Inventory.create_toolbar([], 7)
 toolbar.set_color(ToolbarColorAttribute.BoxOutline, 15)
 toolbar.set_color(ToolbarColorAttribute.BoxSelectedOutline, 8)
@@ -559,6 +633,8 @@ inventory.set_color(InventoryColorAttribute.InventoryText, 15)
 inventory.setFlag(SpriteFlag.RelativeToCamera, true)
 inventory.left = 4
 inventory.top = 4
+inventory.z = 500
+toolbar.z = 500
 inventory_items = [all_items[1]]
 inventory_not_open = true
 toolbarinventory_update()
@@ -584,27 +660,5 @@ forever(function () {
     inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
     menu_movement_code()
     selected_tile_code()
-})
-forever(function () {
-    if (inventory_not_open) {
-        if (controller.B.isPressed()) {
-            controller.moveSprite(mySprite, 0, 0)
-            if (controller.left.isPressed()) {
-                toolbar.change_number(ToolbarNumberAttribute.SelectedIndex, -1)
-                pauseUntil(() => !(controller.left.isPressed()))
-            } else if (controller.right.isPressed()) {
-                toolbar.change_number(ToolbarNumberAttribute.SelectedIndex, 1)
-                pauseUntil(() => !(controller.right.isPressed()))
-            }
-            if (toolbar.get_number(ToolbarNumberAttribute.SelectedIndex) > 6) {
-                toolbar.set_number(ToolbarNumberAttribute.SelectedIndex, 0)
-            } else if (toolbar.get_number(ToolbarNumberAttribute.SelectedIndex) < 0) {
-                toolbar.set_number(ToolbarNumberAttribute.SelectedIndex, 6)
-            }
-        } else {
-            controller.moveSprite(mySprite, 100, 100)
-        }
-    } else {
-        controller.moveSprite(mySprite, 0, 0)
-    }
+    inventory_not_open_hotbar_code()
 })
