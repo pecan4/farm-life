@@ -144,6 +144,26 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "pepper 4"
     },
+    "image31": {
+        "data": "hwQQABAAAAAAAAARiAAAAAAAEQAAiAAAABAAAAAACAAAEAAAAAAIAAABAAAAAIAAAAEAAAAAgAAAAQAKAACAAAChAAqgAIAAAICqoAoACAAAgAoKCgAIAACqqKCgigAAAAAKiooAAAAAAKqgCgAAAACgAAqgAAAAAAAACgAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "bubble pop"
+    },
+    "image30": {
+        "data": "hwQQABAAAAAAABARUQAAAAAAERERBQAAABDxEfEFAAAAEPER/1EAAAAQ8fHxUQAAEBHxH/FRAAAREfEV8VERBfEREV8RFRFR8RHxX1Ef8V/xER9fEB8fX/HxEV8QHx9f8fERXxD/EV/xHxFfEBERUfEREV8AEREFERERUQAAAAAQEREFAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Zzz"
+    },
+    "image32": {
+        "data": "hwQQABAAAAAAAAC7uwAAAAAAu7u7uwAAALD7APC7CwAAu/AA/7C7ALAL8PDwu7sLsAvwD7C7sAu7APAAuwsAu/sAAL+7AAC7+wDwuwsP8L/7AL+7AA8Pv/D7uwsAD78P8L+7DwD/sA/wuwsPAAC7APCwuw8AuwsAAAC7u7u7AAAAAAC7uwAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "XZzzX"
+    },
+    "image33": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAA8P////8AAAAPkP///wAA8ACQmZn5AAAPAJD///8AAA8AkP///wAADwCQmfn/AADwAJD///8AAAAPkP///wAAAPD/////AAAAAAD/DwAAAAAA8P8AAAAAAAD/DwAAAAAA//8AAAAAAADwDwAAAAAAAAAPAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "watering can"
+    },
     "anim1": {
         "namespace": "myAnimations",
         "id": "anim1",
