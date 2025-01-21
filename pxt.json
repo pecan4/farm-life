@@ -11,7 +11,8 @@
         "BetterSettings": "github:sargedev/bettersettings#2023.5.1",
         "arcade-sprite-events": "github:riknoll/arcade-sprite-events#dc93eec8412053ebbd2b8f01cf5b6ae285d28900",
         "arcade-mini-menu": "github:riknoll/arcade-mini-menu#v0.0.1",
-        "arcade-fancy-text": "github:riknoll/arcade-fancy-text#v0.1.1"
+        "arcade-fancy-text": "github:riknoll/arcade-fancy-text#v0.1.1",
+        "Extra Effects": "github:AlexSzeto/extra-effects#v3.1.0"
     },
     "files": [
         "main.blocks",

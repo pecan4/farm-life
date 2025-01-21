@@ -39,6 +39,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "carrot"
     },
+    "image31": {
+        "data": "hwQQABAAAAAAAAARiAAAAAAAEQAAiAAAABAAAAAACAAAEAAAAAAIAAABAAAAAIAAAAEAAAAAgAAAAQAKAACAAAChAAqgAIAAAICqoAoACAAAgAoKCgAIAACqqKCgigAAAAAKiooAAAAAAKqgCgAAAACgAAqgAAAAAAAACgAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "bubble pop"
+    },
     "image12": {
         "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAX/////DwAFAN/d3d39AAAF393d3d0PBVDfM93d3Q8AAD/d093dDwAF3zPDzNwPBQA/3cPM3A8AUN8z3d3dD1AAP93d3d0PAADf3d3d3Q8FUN/d3d39AAAA/////w8AAAAAAAAAAAAAAAAAAAAAAA==",
         "mimeType": "image/x-mkcd-f4",
@@ -144,11 +149,6 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "pepper 4"
     },
-    "image31": {
-        "data": "hwQQABAAAAAAAAARiAAAAAAAEQAAiAAAABAAAAAACAAAEAAAAAAIAAABAAAAAIAAAAEAAAAAgAAAAQAKAACAAAChAAqgAIAAAICqoAoACAAAgAoKCgAIAACqqKCgigAAAAAKiooAAAAAAKqgCgAAAACgAAqgAAAAAAAACgAAAAAAAAAAAAAAAA==",
-        "mimeType": "image/x-mkcd-f4",
-        "displayName": "bubble pop"
-    },
     "image30": {
         "data": "hwQQABAAAAAAABARUQAAAAAAERERBQAAABDxEfEFAAAAEPER/1EAAAAQ8fHxUQAAEBHxH/FRAAAREfEV8VERBfEREV8RFRFR8RHxX1Ef8V/xER9fEB8fX/HxEV8QHx9f8fERXxD/EV/xHxFfEBERUfEREV8AEREFERERUQAAAAAQEREFAAAAAA==",
         "mimeType": "image/x-mkcd-f4",
@@ -170,6 +170,12 @@
         "mimeType": "application/mkcd-animation",
         "data": "YzgwMDEwMDAxMDAwMDEwMDAwMDAwMDAwMDAwMDAwMDAwMDAwNjA2NjY2MDYwMDAwMDAwMDY2NjY2NjY2MDAwMDAwMDA2NjY2NjY2NjAwMDAwMDAwNjY2NjY2NjYwMDAwMDAwMDY2NjY2NjY2MDAwMDAwMDA2NjY2NjY2NjAwMDAwMDAwNjA2NjY2MDYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=",
         "displayName": "myAnim"
+    },
+    "song1": {
+        "data": "00780004080c00",
+        "mimeType": "application/mkcd-song",
+        "displayName": "mySong",
+        "namespace": "mySongs."
     },
     "*": {
         "mimeType": "image/x-mkcd-f4",

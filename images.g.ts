@@ -155,6 +155,25 @@ namespace myImages {
 . . . . . . . c . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `;
+            case "image31":
+            case "bubble pop":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . 1 1 1 1 . . a . . . . . 
+. . 1 1 . . . a 8 8 a . . a . . 
+. 1 . . . . . . a a 8 a a . . . 
+. 1 . . . . . . a . a . a . . . 
+1 . . . . . a a . a . a . a a . 
+1 . . . . . . . a . a 8 a . . . 
+8 . . . . . . . a a . a a . . . 
+8 . . . . . . a . . a 8 . a . . 
+. 8 . . . . . . . . a . . . . . 
+. 8 . . . . . . . . 8 . . . . . 
+. . 8 8 . . . . 8 8 . . . . . . 
+. . . . 8 8 8 8 . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+`;
             case "image12":
             case "carrot seeds":return img`
 . . . 5 . 5 . . 5 . . . 5 . . . 
@@ -554,25 +573,6 @@ b b b . . 4 4 4 b b b . 4 b b .
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `;
-            case "image31":
-            case "bubble pop":return img`
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . 1 1 1 1 . . a . . . . . 
-. . 1 1 . . . a 8 8 a . . a . . 
-. 1 . . . . . . a a 8 a a . . . 
-. 1 . . . . . . a . a . a . . . 
-1 . . . . . a a . a . a . a a . 
-1 . . . . . . . a . a 8 a . . . 
-8 . . . . . . . a a . a a . . . 
-8 . . . . . . a . . a 8 . a . . 
-. 8 . . . . . . . . a . . . . . 
-. 8 . . . . . . . . 8 . . . . . 
-. . 8 8 . . . . 8 8 . . . . . . 
-. . . . 8 8 8 8 . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-`;
             case "image30":
             case "Zzz":return img`
 . . . . . . 1 1 1 1 1 1 1 1 1 . 
@@ -661,7 +661,8 @@ b b f f f b b b . . . . . . b b
 
     helpers._registerFactory("song", function(name: string) {
         switch(helpers.stringTrim(name)) {
-
+            case "song1":
+            case "mySong":return hex`00780004080c00`;
         }
         return null;
     })

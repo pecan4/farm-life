@@ -1,6 +1,7 @@
 namespace SpriteKind {
     export const plant = SpriteKind.create()
     export const no_collisions = SpriteKind.create()
+    export const tile_selector = SpriteKind.create()
 }
 /**
  * 0 = carrots
@@ -77,6 +78,32 @@ function switch_hotbarinventory () {
         }
     }
 }
+function rain_sfx () {
+    music.setVolume(255)
+    music.play(music.createSoundEffect(
+    WaveShape.Noise,
+    250,
+    250,
+    255,
+    255,
+    5000,
+    SoundExpressionEffect.None,
+    InterpolationCurve.Linear
+    ), music.PlaybackMode.LoopingInBackground)
+    while (0 == 0) {
+        pause(randint(1000, 10000))
+        music.play(music.createSoundEffect(
+        WaveShape.Sawtooth,
+        5000,
+        250,
+        152,
+        255,
+        250,
+        SoundExpressionEffect.Warble,
+        InterpolationCurve.Logarithmic
+        ), music.PlaybackMode.InBackground)
+    }
+}
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (A_interact) {
         if (inventory_not_open) {
@@ -120,27 +147,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                     }
                 } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Watering Can") {
                     for (let value of sprites.allOfKind(SpriteKind.plant)) {
-                        if (characterAnimations.matchesRule(mySprite, characterAnimations.rule(Predicate.FacingUp))) {
-                            if (value.tilemapLocation() == mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Top)) {
-                                value.setImage(water_to_image(value.image))
-                                sprites.setDataNumber(value, "last day watered", day)
-                            }
-                        } else if (characterAnimations.matchesRule(mySprite, characterAnimations.rule(Predicate.FacingRight))) {
-                            if (value.tilemapLocation() == mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Right)) {
-                                value.setImage(water_to_image(value.image))
-                                sprites.setDataNumber(value, "last day watered", day)
-                            }
-                        } else if (characterAnimations.matchesRule(mySprite, characterAnimations.rule(Predicate.FacingDown))) {
-                            if (value.tilemapLocation() == mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Bottom)) {
-                                value.setImage(water_to_image(value.image))
-                                sprites.setDataNumber(value, "last day watered", day)
-                            }
-                        } else if (characterAnimations.matchesRule(mySprite, characterAnimations.rule(Predicate.FacingLeft))) {
-                            if (value.tilemapLocation() == mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Left)) {
-                                value.setImage(water_to_image(value.image))
-                                sprites.setDataNumber(value, "last day watered", day)
-                            }
-                        } else {
+                        if (value.tilemapLocation() != highlighted_tile_sprite.tilemapLocation()) {
                         	
                         }
                     }
@@ -148,6 +155,15 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                 	
                 }
             }
+        }
+    }
+})
+sprites.onOverlap(SpriteKind.tile_selector, SpriteKind.plant, function (sprite, otherSprite) {
+    if (controller.A.isPressed()) {
+        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Watering Can") {
+            sprites.setDataNumber(otherSprite, "last day watered", day)
+            extraEffects.createSpreadEffectAt(myEffect, otherSprite.x, otherSprite.y, 1, 45, 5)
+            tiles.setTileAt(otherSprite.tilemapLocation(), assets.tile`myTile10`)
         }
     }
 })
@@ -202,6 +218,7 @@ events.tileEvent(SpriteKind.Player, assets.tile`myTile14`, events.TileEvent.Star
         if (selectedIndex == 0) {
             grow()
             day += 1
+            tileUtil.replaceAllTiles(assets.tile`myTile10`, assets.tile`myTile`)
         }
         myMenu.close()
         A_interact = true
@@ -564,20 +581,21 @@ function if_not_wall_or_floor () {
     return !(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile1`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile2`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile3`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile4`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile5`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile7`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile8`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile9`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile6`)) && !(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile14`))))))))))
 }
 function water_to_image (myImage: Image) {
+    temp_image = myImage
     for (let index = 0; index <= 15; index++) {
         for (let index2 = 0; index2 <= 15; index2++) {
             if (index % 2 == 0) {
                 if (!(index2 % 2 == 0)) {
-                    myImage.setPixel(index2, index, 9)
+                    temp_image.setPixel(index2, index, 9)
                 }
             } else {
                 if (index2 % 2 == 0) {
-                    myImage.setPixel(index2, index, 9)
+                    temp_image.setPixel(index2, index, 9)
                 }
             }
         }
     }
-    return myImage
+    return temp_image
 }
 function inventory_not_open_hotbar_code () {
     if (inventory_not_open) {
@@ -621,12 +639,14 @@ function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
         tiles.setWallAt(mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Left), wall)
     }
 }
+let temp_image: Image = null
 let myMenu: miniMenu.MenuSprite = null
 let plant_on_tile = false
 let hotbar_selected = false
 let plant_images_array2: Image[] = []
 let plant_sprite: Sprite = null
 let tempreadvar: string[] = []
+let myEffect: SpreadEffectData = null
 let A_interact = false
 let move = false
 let highlighted_tile_sprite: Sprite = null
@@ -654,7 +674,7 @@ let plant_array = blockSettings.readStringArray("plant array")
 if (0 < list.length) {
     read_plant_data(plant_array[0])
 }
-day = 0
+day = 1
 tiles.setCurrentTilemap(tilemap`level3`)
 mySprite = sprites.create(img`
     . . . . . . 7 7 7 7 . . . . . . 
@@ -718,11 +738,43 @@ highlighted_tile_sprite = sprites.create(img`
     f . . . . . . . . . . . . . . f 
     f f f f . . . . . . . . f f f f 
     `, SpriteKind.no_collisions)
+let tile_selector_collision_sprite = sprites.create(img`
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    f f f f f f f f f f f f f f f f 
+    `, SpriteKind.tile_selector)
+tile_selector_collision_sprite.setFlag(SpriteFlag.Invisible, true)
 move = true
 A_interact = true
+myEffect = extraEffects.createCustomSpreadEffectData(
+[
+8,
+9,
+10
+],
+false,
+extraEffects.createPresetSizeTable(ExtraEffectPresetShape.Spark),
+extraEffects.createPercentageRange(25, 30),
+extraEffects.createPercentageRange(25, 50),
+extraEffects.createTimeRange(200, 400)
+)
 forever(function () {
     inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
     menu_movement_code()
     selected_tile_code()
     inventory_not_open_hotbar_code()
+    tiles.placeOnTile(tile_selector_collision_sprite, highlighted_tile_sprite.tilemapLocation())
 })
