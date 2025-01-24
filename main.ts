@@ -14,6 +14,56 @@ namespace SpriteKind {
  * 
  * 4 = peppers
  */
+function plant_plant (num: number) {
+    plant_on_tile = true
+    for (let value of sprites.allOfKind(SpriteKind.plant)) {
+        if (value.tilemapLocation() == highlighted_tile_sprite.tilemapLocation()) {
+            plant_on_tile = false
+        }
+    }
+    if (tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile`) && plant_on_tile) {
+        plant_sprite = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.plant)
+        sprites.setDataNumber(plant_sprite, "type", num)
+        sprites.setDataNumber(plant_sprite, "grow cycles", 0)
+        sprites.setDataNumber(plant_sprite, "last day watered", 0)
+        sprites.setDataNumber(plant_sprite, "stage", 0)
+        if (num == 0) {
+            plant_sprite.setImage(plant_images_array2[num])
+        } else {
+            plant_sprite.setImage(plant_images_array2[num * 4 - 1])
+        }
+        plant_sprite.setImage(plant_images_array2[0])
+        tiles.placeOnTile(plant_sprite, highlighted_tile_sprite.tilemapLocation())
+    }
+}
+sprites.onOverlap(SpriteKind.tile_selector, SpriteKind.plant, function (sprite, otherSprite) {
+    if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
+        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Watering Can") {
+            if (controller.A.isPressed()) {
+                sprites.setDataNumber(otherSprite, "last day watered", day)
+                extraEffects.createSpreadEffectAt(myEffect, otherSprite.x, otherSprite.y, 1, 45, 5)
+                tiles.setTileAt(otherSprite.tilemapLocation(), assets.tile`myTile10`)
+            }
+        }
+    }
+})
 /**
  * first = type
  * 
@@ -33,17 +83,6 @@ namespace SpriteKind {
  * 
  * stage
  */
-sprites.onOverlap(SpriteKind.tile_selector, SpriteKind.plant, function (sprite, otherSprite) {
-    if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
-        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Watering Can") {
-            if (controller.A.isPressed()) {
-                sprites.setDataNumber(otherSprite, "last day watered", day)
-                extraEffects.createSpreadEffectAt(myEffect, otherSprite.x, otherSprite.y, 1, 45, 5)
-                tiles.setTileAt(otherSprite.tilemapLocation(), assets.tile`myTile10`)
-            }
-        }
-    }
-})
 function read_plant_data (text: string) {
     tempreadvar = text.split(",")
     plant_sprite = sprites.create(img`
@@ -694,11 +733,11 @@ let temp_number = 0
 let plant_items_location_in_all_items_array: number[] = []
 let myMenu: miniMenu.MenuSprite = null
 let plant_names_array: string[] = []
-let plant_on_tile = false
 let hotbar_selected = false
+let tempreadvar: string[] = []
 let plant_images_array2: Image[] = []
 let plant_sprite: Sprite = null
-let tempreadvar: string[] = []
+let plant_on_tile = false
 let myEffect: SpreadEffectData = null
 let A_interact = false
 let move = false
