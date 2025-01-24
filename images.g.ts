@@ -649,39 +649,20 @@ f 3 3 4 2 f f 4 4 3 2 f 3 4 3 2
 . . . . . . . . f f 3 3 f . . . 
 . . . . . . . . . . f f . . . . 
 `;
-            case "image36":
-            case "peppers":return img`
-. . . . . . . . . . . 3 . . . . 
-. . . . . . . . 3 3 3 . . . . . 
-. . . . . . . b b 3 . . . 3 . . 
-. . . . . . b b b . . . 3 . . . 
-. . . . . . b b . . . 3 3 . . . 
-. . . . . b b b . . . b 3 . . . 
-. . . b b b b . . . . b b . . . 
-. b b b b . . . . . . b b . . . 
-. . . . . . . . . . b b b . . . 
-. . . . b . . . . b b b . . . . 
-. . . . b . . b b b . . . . . . 
-. . . . b b . . . . . . . . . . 
-. . . . b b b . . . . . . . . . 
-. . . . . b b b b b 3 . . . . . 
-. . . . . . b b b 3 3 3 . . . . 
-. . . . . . . . . . . . 3 . . . 
-`;
-            case "image40":
-            case "broccoli seeds":return img`
-. . . 7 . 7 . . 7 . . . 7 . . . 
-. . . . . . . . . . 7 . . . . . 
-. . 7 . 7 . . 7 . . . . . . . . 
-. . . . . 7 . . . 7 . . 7 . . . 
+            case "image41":
+            case "tomato seeds1":return img`
+. . . 5 . 5 . . c . . . c . . . 
+. . . . . . . . . . 5 . . . . . 
+. . 5 . 5 . . 5 . . . . . . . . 
+. . . . . c . . . c . . c . . . 
 . . f f f f f f f f f f f f . . 
 . . f d d d d d d d d d d f . . 
-. . f d d d 2 2 2 d d d d f . . 
-. . f d d 2 2 3 2 2 d d d f . . 
-. . f d d 2 3 2 3 2 2 d d f . . 
-. . f d d d 2 2 2 2 d d d f . . 
-. . f d d d d 4 4 d d d d f . . 
-. . f d d d d 4 4 d d d d f . . 
+. . f d d 3 d 3 d 3 d d d f . . 
+. . f d d d 3 3 3 d d d d f . . 
+. . f d d b b b b b d d d f . . 
+. . f d b b b b b b b d d f . . 
+. . f d b b b b b b b d d f . . 
+. . f d d b b b b b d d d f . . 
 . . f d d d d d d d d d d f . . 
 . . . f d d d d d d d d f . . . 
 . . . . f f f f f f f f . . . . 
@@ -706,43 +687,24 @@ f 3 3 4 2 f f 4 4 3 2 f 3 4 3 2
 . 3 3 3 b b b . . . . b b b . . 
 . 3 . . . . . . . . . . . . . . 
 `;
-            case "image12":
-            case "carrot seeds":return img`
-. . . 5 . 5 . . 5 . . . 5 . . . 
-. . . . . . . . . . 5 . . . . . 
-. . 5 . 5 . . 5 . . . . . . . . 
-. . . . . 5 . . . 5 . . 5 . . . 
+            case "image40":
+            case "broccoli seeds":return img`
+. . . 7 . 7 . . 7 . . . 7 . . . 
+. . . . . . . . . . 7 . . . . . 
+. . 7 . 7 . . 7 . . . . . . . . 
+. . . . . 7 . . . 7 . . 7 . . . 
 . . f f f f f f f f f f f f . . 
-. . f d d d 3 d 3 d 3 d d f . . 
-. . f d d 3 d 3 d 3 d d d 3 . . 
-. . f d d 3 d 3 d 3 d d d f . . 
-. . f d d d 3 3 3 d d d d f . . 
-. . f d d d d c c d d d d f . . 
-. . f d d d d c c d d d d f . . 
-. . f d d d d c c d d d d f . . 
-. . f d d d d c c d d d d f . . 
+. . f d d d d d d d d d d f . . 
+. . f d d d 2 2 2 d d d d f . . 
+. . f d d 2 2 3 2 2 d d d f . . 
+. . f d d 2 3 2 3 2 2 d d f . . 
+. . f d d d 2 2 2 2 d d d f . . 
+. . f d d d d 4 4 d d d d f . . 
+. . f d d d d 4 4 d d d d f . . 
+. . f d d d d d d d d d d f . . 
 . . . f d d d d d d d d f . . . 
 . . . . f f f f f f f f . . . . 
 . . . . . . . . . . . . . . . . 
-`;
-            case "image38":
-            case "Luke broccoli":return img`
-. . . . . . . . . . . . . . . . 
-. . . . . . 2 2 2 2 2 2 2 . . . 
-. . . . 2 2 3 3 3 2 3 3 3 2 . . 
-. . . 2 3 3 3 3 3 3 2 2 3 3 2 . 
-. . 2 3 2 2 2 3 2 2 3 3 2 3 2 . 
-. 2 3 2 3 3 3 2 3 3 3 3 3 2 2 . 
-. 2 3 2 3 3 3 2 2 2 3 3 3 3 2 . 
-. . 2 2 3 3 2 3 3 3 2 3 3 3 2 . 
-. . . 2 2 2 2 3 3 3 2 2 2 2 . . 
-. . . 3 4 3 4 2 2 2 2 4 3 . . . 
-. . . . 3 4 3 3 4 3 4 3 . . . . 
-. . . . . 3 4 4 4 4 3 . . . . . 
-. . . . . . 3 f 4 f 3 . . . . . 
-. . . . . . 3 4 f 4 3 . . . . . 
-. . . . . . 3 4 4 4 3 . . . . . 
-. . . . . . . 3 3 3 . . . . . . 
 `;
             case "image37":
             case "broccoli":return img`
@@ -763,20 +725,77 @@ f 3 3 4 2 f f 4 4 3 2 f 3 4 3 2
 . . . . . . 3 4 4 4 3 . . . . . 
 . . . . . . . 3 3 3 . . . . . . 
 `;
-            case "image41":
-            case "tomato seeds1":return img`
-. . . 5 . 5 . . c . . . c . . . 
+            case "image38":
+            case "Luke broccoli":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . 2 2 2 2 2 2 2 . . . 
+. . . . 2 2 3 3 3 2 3 3 3 2 . . 
+. . . 2 3 3 3 3 3 3 2 2 3 3 2 . 
+. . 2 3 2 2 2 3 2 2 3 3 2 3 2 . 
+. 2 3 2 3 3 3 2 3 3 3 3 3 2 2 . 
+. 2 3 2 3 3 3 2 2 2 3 3 3 3 2 . 
+. . 2 2 3 3 2 3 3 3 2 3 3 3 2 . 
+. . . 2 2 2 2 3 3 3 2 2 2 2 . . 
+. . . 3 4 3 4 2 2 2 2 4 3 . . . 
+. . . . 3 4 3 3 4 3 4 3 . . . . 
+. . . . . 3 4 4 4 4 3 . . . . . 
+. . . . . . 3 f 4 f 3 . . . . . 
+. . . . . . 3 4 f 4 3 . . . . . 
+. . . . . . 3 4 4 4 3 . . . . . 
+. . . . . . . 3 3 3 . . . . . . 
+`;
+            case "image36":
+            case "peppers":return img`
+. . . . . . . . . . . 3 . . . . 
+. . . . . . . . 3 3 3 . . . . . 
+. . . . . . . b b 3 . . . 3 . . 
+. . . . . . b b b . . . 3 . . . 
+. . . . . . b b . . . 3 3 . . . 
+. . . . . b b b . . . b 3 . . . 
+. . . b b b b . . . . b b . . . 
+. b b b b . . . . . . b b . . . 
+. . . . . . . . . . b b b . . . 
+. . . . b . . . . b b b . . . . 
+. . . . b . . b b b . . . . . . 
+. . . . b b . . . . . . . . . . 
+. . . . b b b . . . . . . . . . 
+. . . . . b b b b b 3 . . . . . 
+. . . . . . b b b 3 3 3 . . . . 
+. . . . . . . . . . . . 3 . . . 
+`;
+            case "image12":
+            case "carrot seeds":return img`
+. . . 5 . 5 . . 5 . . . 5 . . . 
 . . . . . . . . . . 5 . . . . . 
 . . 5 . 5 . . 5 . . . . . . . . 
-. . . . . c . . . c . . c . . . 
+. . . . . 5 . . . 5 . . 5 . . . 
 . . f f f f f f f f f f f f . . 
-. . f d d d d d d d d d d f . . 
+. . f d d d 3 d 3 d 3 d d f . . 
+. . f d d 3 d 3 d 3 d d d f . . 
 . . f d d 3 d 3 d 3 d d d f . . 
 . . f d d d 3 3 3 d d d d f . . 
-. . f d d b b b b b d d d f . . 
-. . f d b b b b b b b d d f . . 
-. . f d b b b b b b b d d f . . 
-. . f d d b b b b b d d d f . . 
+. . f d d d d c c d d d d f . . 
+. . f d d d d c c d d d d f . . 
+. . f d d d d c c d d d d f . . 
+. . f d d d d c c d d d d f . . 
+. . . f d d d d d d d d f . . . 
+. . . . f f f f f f f f . . . . 
+. . . . . . . . . . . . . . . . 
+`;
+            case "image42":
+            case "pepper seeds":return img`
+. . . 5 . 5 . . 5 . . . 5 . . . 
+. . . . . . . . . . 5 . . . . . 
+. . 5 . 5 . . 5 . . . . . . . . 
+. . . . . 5 . . . 5 . . 5 . . . 
+. . f f f f f f f f f f f f . . 
+. . f d d d d d d d d d d f . . 
+. . f d d d d d d 3 d d d f . . 
+. . f d d d d 3 3 d d d d f . . 
+. . f d d d d b 3 d d d d f . . 
+. . f d b d b b b d d d d f . . 
+. . f d b b b b d d d d d f . . 
+. . f d d b b d d d d d d f . . 
 . . f d d d d d d d d d d f . . 
 . . . f d d d d d d d d f . . . 
 . . . . f f f f f f f f . . . . 

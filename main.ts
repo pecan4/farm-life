@@ -34,11 +34,13 @@ namespace SpriteKind {
  * stage
  */
 sprites.onOverlap(SpriteKind.tile_selector, SpriteKind.plant, function (sprite, otherSprite) {
-    if (controller.A.isPressed()) {
+    if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
         if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Watering Can") {
-            sprites.setDataNumber(otherSprite, "last day watered", day)
-            extraEffects.createSpreadEffectAt(myEffect, otherSprite.x, otherSprite.y, 1, 45, 5)
-            tiles.setTileAt(otherSprite.tilemapLocation(), assets.tile`myTile10`)
+            if (controller.A.isPressed()) {
+                sprites.setDataNumber(otherSprite, "last day watered", day)
+                extraEffects.createSpreadEffectAt(myEffect, otherSprite.x, otherSprite.y, 1, 45, 5)
+                tiles.setTileAt(otherSprite.tilemapLocation(), assets.tile`myTile10`)
+            }
         }
     }
 })
@@ -272,26 +274,22 @@ function create_all_items_array () {
     Inventory.create_item("Watering Can", assets.image`watering can`, "3"),
     Inventory.create_item("Carrot", assets.image`carrot`),
     Inventory.create_item("Green bean seeds", assets.image`green bean seeds`),
-    Inventory.create_item("", img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `)
+    Inventory.create_item("Green beans", assets.image`green beans`),
+    Inventory.create_item("Tomato seeds", assets.image`tomato seeds1`),
+    Inventory.create_item("Tomatoes", assets.image`tomatoes`),
+    Inventory.create_item("Broccoli seeds", assets.image`broccoli seeds`),
+    Inventory.create_item("Broccoli", assets.image`broccoli`),
+    Inventory.create_item("Luke", assets.image`Luke broccoli`),
+    Inventory.create_item("Pepper seeds", assets.image`pepper seeds`),
+    Inventory.create_item("Peppers", assets.image`peppers`)
     ]
-    plant_items_location_in_all_items_array = [4]
+    plant_items_location_in_all_items_array = [
+    4,
+    6,
+    8,
+    10,
+    13
+    ]
 }
 function menu_movement_code () {
     if (!(inventory_not_open)) {
@@ -604,13 +602,26 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.plant, function (sprite, otherSprite) {
-    if (controller.A.isPressed()) {
-        if (!(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)])) {
-            if (sprites.readDataNumber(otherSprite, "stage") >= 3) {
-                if (inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]]) == -1) {
-                    if (toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]]) == -1) {
-                    	
+    if (inventory_not_open) {
+        if (controller.A.isPressed()) {
+            if (!(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)])) {
+                if (sprites.readDataNumber(otherSprite, "stage") >= 3) {
+                    if (inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]]) == -1) {
+                        if (toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]]) == -1) {
+                            temp_number = 0
+                            inventory_items.push(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]])
+                            inventory_items[inventory_items.length - 1].set_text(ItemTextAttribute.Tooltip, "1")
+                            toolbarinventory_update()
+                            sprites.destroy(otherSprite)
+                        } else {
+                            toolbar_items[toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]])].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(toolbar_items[toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]])].get_text(ItemTextAttribute.Tooltip)) + 1))
+                            sprites.destroy(otherSprite)
+                        }
+                    } else {
+                        inventory_items[inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]])].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(inventory_items[inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]])].get_text(ItemTextAttribute.Tooltip)) + 1))
+                        sprites.destroy(otherSprite)
                     }
+                    toolbarinventory_update()
                 }
             }
         }
@@ -679,6 +690,7 @@ function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
     }
 }
 let temp_image: Image = null
+let temp_number = 0
 let plant_items_location_in_all_items_array: number[] = []
 let myMenu: miniMenu.MenuSprite = null
 let plant_names_array: string[] = []
