@@ -33,6 +33,15 @@ namespace SpriteKind {
  * 
  * stage
  */
+sprites.onOverlap(SpriteKind.tile_selector, SpriteKind.plant, function (sprite, otherSprite) {
+    if (controller.A.isPressed()) {
+        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Watering Can") {
+            sprites.setDataNumber(otherSprite, "last day watered", day)
+            extraEffects.createSpreadEffectAt(myEffect, otherSprite.x, otherSprite.y, 1, 45, 5)
+            tiles.setTileAt(otherSprite.tilemapLocation(), assets.tile`myTile10`)
+        }
+    }
+})
 function read_plant_data (text: string) {
     tempreadvar = text.split(",")
     plant_sprite = sprites.create(img`
@@ -146,24 +155,11 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                         tiles.placeOnTile(plant_sprite, highlighted_tile_sprite.tilemapLocation())
                     }
                 } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Watering Can") {
-                    for (let value of sprites.allOfKind(SpriteKind.plant)) {
-                        if (value.tilemapLocation() != highlighted_tile_sprite.tilemapLocation()) {
-                        	
-                        }
-                    }
+                	
                 } else {
                 	
                 }
             }
-        }
-    }
-})
-sprites.onOverlap(SpriteKind.tile_selector, SpriteKind.plant, function (sprite, otherSprite) {
-    if (controller.A.isPressed()) {
-        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Watering Can") {
-            sprites.setDataNumber(otherSprite, "last day watered", day)
-            extraEffects.createSpreadEffectAt(myEffect, otherSprite.x, otherSprite.y, 1, 45, 5)
-            tiles.setTileAt(otherSprite.tilemapLocation(), assets.tile`myTile10`)
         }
     }
 })
@@ -200,6 +196,15 @@ function plant_images_array () {
     assets.image`pepper 2`,
     assets.image`pepper 3`,
     assets.image`pepper 4`
+    ]
+}
+function make_plant_names_array () {
+    plant_names_array = [
+    "Carrot",
+    "Green beans",
+    "Tomatoes",
+    "Broccoli",
+    "Peppers"
     ]
 }
 function compress_plant_data (mySprite: Sprite) {
@@ -264,8 +269,29 @@ function create_all_items_array () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         `, "2"),
-    Inventory.create_item("Watering Can", assets.image`watering can`, "3")
+    Inventory.create_item("Watering Can", assets.image`watering can`, "3"),
+    Inventory.create_item("Carrot", assets.image`carrot`),
+    Inventory.create_item("Green bean seeds", assets.image`green bean seeds`),
+    Inventory.create_item("", img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `)
     ]
+    plant_items_location_in_all_items_array = [4]
 }
 function menu_movement_code () {
     if (!(inventory_not_open)) {
@@ -577,6 +603,19 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         switch_hotbarinventory()
     }
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.plant, function (sprite, otherSprite) {
+    if (controller.A.isPressed()) {
+        if (!(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)])) {
+            if (sprites.readDataNumber(otherSprite, "stage") >= 3) {
+                if (inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]]) == -1) {
+                    if (toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]]) == -1) {
+                    	
+                    }
+                }
+            }
+        }
+    }
+})
 function if_not_wall_or_floor () {
     return !(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile1`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile2`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile3`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile4`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile5`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile7`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile8`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile9`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile6`)) && !(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile14`))))))))))
 }
@@ -640,7 +679,9 @@ function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
     }
 }
 let temp_image: Image = null
+let plant_items_location_in_all_items_array: number[] = []
 let myMenu: miniMenu.MenuSprite = null
+let plant_names_array: string[] = []
 let plant_on_tile = false
 let hotbar_selected = false
 let plant_images_array2: Image[] = []
@@ -771,6 +812,7 @@ extraEffects.createPercentageRange(25, 30),
 extraEffects.createPercentageRange(25, 50),
 extraEffects.createTimeRange(200, 400)
 )
+make_plant_names_array()
 forever(function () {
     inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
     menu_movement_code()

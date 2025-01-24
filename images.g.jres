@@ -34,20 +34,10 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "myImage4"
     },
-    "image13": {
-        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwMAAAAAAAADADAwAAAAAAAzADAAAAAAAzMzN8zHwMAAMDMMx8zHwMMDAzx8x8AAADAwMAAAAAADAwAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-        "mimeType": "image/x-mkcd-f4",
-        "displayName": "carrot"
-    },
     "image31": {
         "data": "hwQQABAAAAAAAAARiAAAAAAAEQAAiAAAABAAAAAACAAAEAAAAAAIAAABAAAAAIAAAAEAAAAAgAAAAQAKAACAAAChAAqgAIAAAICqoAoACAAAgAoKCgAIAACqqKCgigAAAAAKiooAAAAAAKqgCgAAAACgAAqgAAAAAAAACgAAAAAAAAAAAAAAAA==",
         "mimeType": "image/x-mkcd-f4",
         "displayName": "bubble pop"
-    },
-    "image12": {
-        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAX/////DwAFAN/d3d39AAAF393d3d0PBVDfM93d3Q8AAD/d093dDwAF3zPDzNwPBQA/3cPM3A8AUN8z3d3dD1AAP93d3d0PAADf3d3d3Q8FUN/d3d39AAAA/////w8AAAAAAAAAAAAAAAAAAAAAAA==",
-        "mimeType": "image/x-mkcd-f4",
-        "displayName": "carrot seeds"
     },
     "image8": {
         "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAAAAwAAAAAAAAMDMDAAAAAAADAAMAAAAAAAAzAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
@@ -163,6 +153,56 @@
         "data": "hwQQABAAAAAAAAAAAAAAAAAA8P////8AAAAPkP///wAA8ACQmZn5AAAPAJD///8AAA8AkP///wAADwCQmfn/AADwAJD///8AAAAPkP///wAAAPD/////AAAAAAD/DwAAAAAA8P8AAAAAAAD/DwAAAAAA//8AAAAAAADwDwAAAAAAAAAPAAAAAA==",
         "mimeType": "image/x-mkcd-f4",
         "displayName": "watering can"
+    },
+    "image13": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwMAAAAAAAADADAwAAAAAAAzADAAAAAAAzMzN8zHwMAAMDMMx8zHwMMDAzx8x8AAADAwMAAAAAADAwAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "carrot"
+    },
+    "image34": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////DwAEAN/d3d39AAAD30PU3d0PBEDfPd3d3Q8AAN/dQ9TdDwAE3zM93d0PAwA/RDMz0w8AQN89Pd3dDzAA39PdRN0PAADfQ9Td3Q8EMN/d3d39AAAA/////w8AAAAAAAAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "green bean seeds"
+    },
+    "image35": {
+        "data": "hwQQABAAAAAAAPAzDwAAAAAA/0LzAAAA8P8zPzMPAAA/80IvRPMAAC80P/MyMw8A8DMvRD9E8wDwQvQyL0TzAAAvMz/0M/MAAPBDL/RCNA8A8EL0My8zDwAAP/NC9EPzAAAvRC/zMvMAAPAy80MvDwAAAD/0MvMAAAAALzMvDwAAAADw8vAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "green beans"
+    },
+    "image36": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAALAAAAAAAAAAsAAAAAAAAAC7AAAAAAAAALuwuwsAAACwCwCwuwAAsLsLAAC7CwC7uwAAC7ALMLsAAAALsAswAwAAsAuwAzAAAAC7ADADAwCzu7sAAAMAMDO7CwAAMAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "peppers"
+    },
+    "image40": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/////DwAHAN/d3d39AAAH393d3d0PB3DfLdLd3Q8AAN8iI93dDwAH3zIiRN0PBwDfIiNE3Q8AcN8tIt3dD3AA393S3d0PAADf3d3d3Q8HcN/d3d39AAAA/////w8AAAAAAAAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "broccoli seeds"
+    },
+    "image39": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAsLsAAAAzAAO7uwuwOwMAMLu7C7u7AzAzu7sLu7sLADC7uwuwuwsAA7u7CwCwCwAAsLsAMAAAAAAAADAwMAAAsAsAADMDAAC7uwCwu7sAALu7C7u7uwsAs7sLu7u7CzAzuwC7u7sLMAAAALC7uwAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "tomatoes"
+    },
+    "image12": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAX/////DwAFAN/d3d39AAAF393d3d0PBVDfM93d3Q8AAD/d093dDwAF3zPDzNwPBQA/3cPM3A8AUN8z3d3dD1AAP93d3d0PAADf3d3d3Q8FUN/d3d39AAAA//P//w8AAAAAAAAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "carrot seeds"
+    },
+    "image38": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAIAIAAAAAAAAyIwAAAAAAICMiMgAAAAAyMjNCAwAAADIyMzI0AAAgMzIjQkMzAyAzIzIjQ080IDMyMiNE9DQgMjIyI0NPNCAjMyMiNDMDICMzM0IDAAAgMzIzMgAAAAAyIzMCAAAAACAiIgAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Luke broccoli"
+    },
+    "image37": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAIAIAAAAAAAAyIwAAAAAAICMiMgAAAAAyMjNCAwAAADIyMzI0AAAgMzIjQkMzAyAzIzIjQ0Q0IDMyMiNERDQgMjIyI0NENCAjMyMiNDMDICMzM0IDAAAgMzIzMgAAAAAyIzMCAAAAACAiIgAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "broccoli"
+    },
+    "image41": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAX/////DwAFAN/d3d39AAAF3929290PBcDf07u73Q8AAN89u7vdDwAF3zO7u90PDADfPbu73Q8AwN/Tu7vdD1AA3929290PAADf3d3d3Q8MwN/d3d39AAAA/////w8AAAAAAAAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "tomato seeds1"
     },
     "anim1": {
         "namespace": "myAnimations",
