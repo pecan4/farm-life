@@ -3,42 +3,76 @@ namespace SpriteKind {
     export const no_collisions = SpriteKind.create()
     export const tile_selector = SpriteKind.create()
 }
+/**
+ * 0 = carrots
+ * 
+ * 1 = green beans
+ * 
+ * 2 = tomatoes
+ * 
+ * 3 = broccoli
+ * 
+ * 4 = peppers
+ */
+/**
+ * first = type
+ * 
+ * ,
+ * 
+ * second# = grow cycles
+ * 
+ * ,
+ * 
+ * third# = last day watered
+ * 
+ * ,
+ * 
+ * coordinates
+ * 
+ * ,
+ * 
+ * stage
+ */
 function plant_plant (num: number) {
-    plant_not_on_tile = true
-    for (let value of sprites.allOfKind(SpriteKind.plant)) {
-        if (value.tilemapLocation() == highlighted_tile_sprite.tilemapLocation()) {
-            plant_not_on_tile = false
+    if (1 <= parseFloat(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Tooltip))) {
+        plant_not_on_tile = true
+        for (let value of sprites.allOfKind(SpriteKind.plant)) {
+            if (value.tilemapLocation() == highlighted_tile_sprite.tilemapLocation()) {
+                plant_not_on_tile = false
+            }
         }
-    }
-    if (tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile`) && plant_not_on_tile) {
-        plant_sprite = sprites.create(img`
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            `, SpriteKind.plant)
-        sprites.setDataNumber(plant_sprite, "type", num)
-        sprites.setDataNumber(plant_sprite, "grow cycles", 0)
-        sprites.setDataNumber(plant_sprite, "last day watered", 0)
-        sprites.setDataNumber(plant_sprite, "stage", 0)
-        if (num == 0) {
-            plant_sprite.setImage(plant_images_array2[num])
-        } else {
-            plant_sprite.setImage(plant_images_array2[num * 4])
+        if (tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile`) && plant_not_on_tile) {
+            plant_sprite = sprites.create(img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `, SpriteKind.plant)
+            sprites.setDataNumber(plant_sprite, "type", num)
+            sprites.setDataNumber(plant_sprite, "grow cycles", 0)
+            sprites.setDataNumber(plant_sprite, "last day watered", 0)
+            sprites.setDataNumber(plant_sprite, "stage", 0)
+            if (num == 0) {
+                plant_sprite.setImage(plant_images_array2[num])
+            } else {
+                plant_sprite.setImage(plant_images_array2[num * 4])
+            }
+            tiles.placeOnTile(plant_sprite, highlighted_tile_sprite.tilemapLocation())
+            toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Tooltip)) - 1))
+            toolbarinventory_update()
         }
-        tiles.placeOnTile(plant_sprite, highlighted_tile_sprite.tilemapLocation())
     }
 }
 sprites.onOverlap(SpriteKind.tile_selector, SpriteKind.plant, function (sprite, otherSprite) {
@@ -215,36 +249,6 @@ events.tileEvent(SpriteKind.Player, assets.tile`myTile14`, events.TileEvent.Star
         move = true
     })
 })
-/**
- * 0 = carrots
- * 
- * 1 = green beans
- * 
- * 2 = tomatoes
- * 
- * 3 = broccoli
- * 
- * 4 = peppers
- */
-/**
- * first = type
- * 
- * ,
- * 
- * second# = grow cycles
- * 
- * ,
- * 
- * third# = last day watered
- * 
- * ,
- * 
- * coordinates
- * 
- * ,
- * 
- * stage
- */
 function create_all_items_array () {
     all_items = [
     Inventory.create_item("Hoe", img`
@@ -301,7 +305,7 @@ function create_all_items_array () {
     6,
     8,
     10,
-    13
+    12
     ]
 }
 function menu_movement_code () {
@@ -319,7 +323,7 @@ function menu_movement_code () {
                 }
             }
             if (controller.A.isPressed()) {
-                if (7 != inventory_items.length) {
+                if (32 != inventory_items.length) {
                     if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
                         inventory_items.push(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)])
                         toolbar_items.removeAt(toolbar.get_number(ToolbarNumberAttribute.SelectedIndex))
@@ -788,7 +792,8 @@ all_items[1],
 all_items[3],
 all_items[5],
 all_items[7],
-all_items[9]
+all_items[9],
+all_items[12]
 ]
 inventory_not_open = true
 toolbarinventory_update()
@@ -844,6 +849,11 @@ extraEffects.createPercentageRange(25, 50),
 extraEffects.createTimeRange(200, 400)
 )
 make_plant_names_array()
+inventory.get_items()[0].set_text(ItemTextAttribute.Tooltip, "10")
+inventory.get_items()[2].set_text(ItemTextAttribute.Tooltip, "10")
+inventory.get_items()[3].set_text(ItemTextAttribute.Tooltip, "10")
+inventory.get_items()[4].set_text(ItemTextAttribute.Tooltip, "10")
+inventory.get_items()[5].set_text(ItemTextAttribute.Tooltip, "10")
 forever(function () {
     inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
     menu_movement_code()
