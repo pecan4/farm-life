@@ -3,69 +3,76 @@ namespace SpriteKind {
     export const no_collisions = SpriteKind.create()
     export const tile_selector = SpriteKind.create()
 }
-function plant_plant (num: number) {
-    if (1 <= parseFloat(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Tooltip))) {
-        plant_not_on_tile = true
-        for (let value of plant_on_tile_image_array) {
-            if (tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), value)) {
-                plant_not_on_tile = false
-            }
-        }
-        if (tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile`) && plant_not_on_tile) {
-            plant_data_array_of_arrays.push([
-            num,
-            0,
-            0,
-            0
-            ])
-            tiles.setTileAt(highlighted_tile_sprite.tilemapLocation(), plant_on_tile_image_array[num * 4])
-            toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Tooltip)) - 1))
-            toolbarinventory_update()
-        }
-    }
+/**
+ * 0 = carrots
+ * 
+ * 1 = green beans
+ * 
+ * 2 = tomatoes
+ * 
+ * 3 = broccoli
+ * 
+ * 4 = peppers
+ */
+/**
+ * first = type
+ * 
+ * ,
+ * 
+ * second# = grow cycles
+ * 
+ * ,
+ * 
+ * third# = last day watered
+ * 
+ * ,
+ * 
+ * coordinates
+ * 
+ * ,
+ * 
+ * stage
+ */
+function make_item_sell_values_array () {
+    item_sell_values_array = [
+    -1,
+    1,
+    -1,
+    -1,
+    5,
+    1,
+    7,
+    1,
+    10,
+    1,
+    13,
+    100,
+    1,
+    18
+    ]
 }
-sprites.onOverlap(SpriteKind.tile_selector, SpriteKind.plant, function (sprite, otherSprite) {
-    if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
-        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Watering Can") {
-            if (controller.A.isPressed()) {
-                sprites.setDataNumber(otherSprite, "last day watered", day)
-                extraEffects.createSpreadEffectAt(myEffect, otherSprite.x, otherSprite.y, 1, 45, 5)
-                tiles.setTileAt(otherSprite.tilemapLocation(), assets.tile`myTile10`)
+function plant_plant (num: number) {
+    timer.background(function () {
+        if (1 <= parseFloat(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Tooltip))) {
+            if (tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile`)) {
+                tiles.setTileAt(highlighted_tile_sprite.tilemapLocation(), plant_on_tile_image_array[num * 4])
+                tiles.setDataNumber(highlighted_tile_sprite.tilemapLocation(), "stage", 0)
+                tiles.setDataNumber(highlighted_tile_sprite.tilemapLocation(), "type", num)
+                tiles.setDataNumber(highlighted_tile_sprite.tilemapLocation(), "grow cycles", 0)
+                tiles.setDataNumber(highlighted_tile_sprite.tilemapLocation(), "last day watered", -1)
+                toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Tooltip)) - 1))
+                toolbarinventory_update()
             }
         }
-    }
-})
+    })
+}
 function read_plant_data (text: string) {
     tempreadvar = text.split(",")
-    plant_sprite = sprites.create(img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, SpriteKind.plant)
-    sprites.setDataNumber(plant_sprite, "type", parseFloat(tempreadvar[0]))
-    sprites.setDataNumber(plant_sprite, "grow cycles", parseFloat(tempreadvar[1]))
-    sprites.setDataNumber(plant_sprite, "last day watered", parseFloat(tempreadvar[2]))
-    if (parseFloat(tempreadvar[0]) == 0) {
-        plant_sprite.setImage(plant_images_array2[parseFloat(tempreadvar[0]) * 4 + parseFloat(tempreadvar[4])])
-    } else {
-        plant_sprite.setImage(plant_images_array2[parseFloat(tempreadvar[0]) * 4 - 1 + parseFloat(tempreadvar[4])])
-    }
-    sprites.setDataNumber(plant_sprite, "stage", parseFloat(tempreadvar[4]))
-    tiles.placeOnTile(plant_sprite, tiles.getTileLocation(parseFloat(tempreadvar[3].split(".")[0]), parseFloat(tempreadvar[3].split(".")[1])))
-    plant_sprite.z = 100
+    tiles.setTileAt(tiles.getTileLocation(parseFloat(tempreadvar[3].split(".")[0]), parseFloat(tempreadvar[3].split(".")[1])), plant_on_tile_image_array[parseFloat(tempreadvar[0]) * 4 + parseFloat(tempreadvar[4])])
+    tiles.setDataNumber(tiles.getTileLocation(parseFloat(tempreadvar[3].split(".")[0]), parseFloat(tempreadvar[3].split(".")[1])), "type", parseFloat(tempreadvar[0]))
+    tiles.setDataNumber(tiles.getTileLocation(parseFloat(tempreadvar[3].split(".")[0]), parseFloat(tempreadvar[3].split(".")[1])), "grow cycles", parseFloat(tempreadvar[1]))
+    tiles.setDataNumber(tiles.getTileLocation(parseFloat(tempreadvar[3].split(".")[0]), parseFloat(tempreadvar[3].split(".")[1])), "last day watered", parseFloat(tempreadvar[2]))
+    tiles.setDataNumber(tiles.getTileLocation(parseFloat(tempreadvar[3].split(".")[0]), parseFloat(tempreadvar[3].split(".")[1])), "stage", parseFloat(tempreadvar[4]))
 }
 function switch_hotbarinventory () {
     if (!(inventory_not_open)) {
@@ -80,6 +87,9 @@ function switch_hotbarinventory () {
         }
     }
 }
+events.tileEvent(SpriteKind.Player, assets.tile`myTile12`, events.TileEvent.StopOverlapping, function (sprite) {
+    selling = false
+})
 function rain_sfx () {
     music.setVolume(255)
     music.play(music.createSoundEffect(
@@ -106,31 +116,6 @@ function rain_sfx () {
         ), music.PlaybackMode.InBackground)
     }
 }
-controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (A_interact) {
-        if (inventory_not_open) {
-            if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
-                if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
-                    if (if_not_wall_or_floor()) {
-                        place_tile_facing(mySprite, assets.tile`myTile`, false)
-                    }
-                } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Carrot Seeds") {
-                    plant_plant(0)
-                } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Green bean seeds") {
-                    plant_plant(1)
-                } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Tomato seeds") {
-                    plant_plant(2)
-                } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Broccoli seeds") {
-                    plant_plant(3)
-                } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Pepper seeds") {
-                    plant_plant(4)
-                } else {
-                	
-                }
-            }
-        }
-    }
-})
 function plant_images_array () {
     plant_images_array2 = [
     assets.image`carrot s1`,
@@ -155,6 +140,24 @@ function plant_images_array () {
     assets.image`pepper 4`
     ]
 }
+controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (!(selling)) {
+        toolbarinventory_update()
+        if (inventory_not_open) {
+            inventory_not_open = false
+        } else {
+            inventory_not_open = true
+            inventory.set_color(InventoryColorAttribute.InventorySelectedOutline, 1)
+            toolbar.set_color(ToolbarColorAttribute.BoxSelectedOutline, 8)
+            hotbar_selected = true
+        }
+    } else {
+        inventory_not_open = true
+        inventory.set_color(InventoryColorAttribute.InventorySelectedOutline, 1)
+        toolbar.set_color(ToolbarColorAttribute.BoxSelectedOutline, 8)
+        hotbar_selected = true
+    }
+})
 function make_plant_names_array () {
     plant_names_array = [
     "Carrot",
@@ -164,8 +167,8 @@ function make_plant_names_array () {
     "Peppers"
     ]
 }
-function compress_plant_data (mySprite: Sprite) {
-    return "" + sprites.readDataNumber(mySprite, "type") + "," + sprites.readDataNumber(mySprite, "grow cycles") + "," + sprites.readDataNumber(mySprite, "last day watered") + "," + ("" + mySprite.tilemapLocation().column + "." + mySprite.tilemapLocation().row) + "," + sprites.readDataNumber(mySprite, "stage")
+function compress_plant_data (mySprite: Sprite, col: number, row: number) {
+    return "" + tiles.readDataNumber(tiles.getTileLocation(col, row), "type") + "," + tiles.readDataNumber(tiles.getTileLocation(col, row), "grow cycles") + "," + tiles.readDataNumber(tiles.getTileLocation(col, row), "last day watered") + "," + ("" + col + "." + row) + "," + tiles.readDataNumber(tiles.getTileLocation(col, row), "stage")
 }
 events.tileEvent(SpriteKind.Player, assets.tile`myTile14`, events.TileEvent.StartOverlapping, function (sprite) {
     A_interact = false
@@ -187,10 +190,6 @@ events.tileEvent(SpriteKind.Player, assets.tile`myTile14`, events.TileEvent.Star
         move = true
     })
 })
-events.tileEvent(SpriteKind.Player, assets.tile`myTile12`, events.TileEvent.StartOverlapping, function (sprite) {
-    inventory_not_open = false
-    selling = true
-})
 function create_all_items_array () {
     all_items = [
     Inventory.create_item("Hoe", img`
@@ -210,7 +209,7 @@ function create_all_items_array () {
         . . 7 7 7 . . . . . . . . . . . 
         . 7 7 7 . . . . . . . . . . . . 
         . . 7 . . . . . . . . . . . . . 
-        `, "0"),
+        `, "-1"),
     Inventory.create_item("Carrot Seeds", assets.image`carrot seeds`, "1"),
     Inventory.create_item("empty", img`
         . . . . . . . . . . . . . . . . 
@@ -229,18 +228,18 @@ function create_all_items_array () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        `, "2"),
-    Inventory.create_item("Watering Can", assets.image`watering can`, "3"),
-    Inventory.create_item("Carrot", assets.image`carrot`),
-    Inventory.create_item("Green bean seeds", assets.image`green bean seeds`),
-    Inventory.create_item("Green beans", assets.image`green beans`),
-    Inventory.create_item("Tomato seeds", assets.image`tomato seeds1`),
-    Inventory.create_item("Tomatoes", assets.image`tomatoes`),
-    Inventory.create_item("Broccoli seeds", assets.image`broccoli seeds`),
-    Inventory.create_item("Broccoli", assets.image`broccoli`),
-    Inventory.create_item("Luke", assets.image`Luke broccoli`),
-    Inventory.create_item("Pepper seeds", assets.image`pepper seeds`),
-    Inventory.create_item("Peppers", assets.image`peppers`)
+        `, "-1"),
+    Inventory.create_item("Watering Can", assets.image`watering can`, "-1"),
+    Inventory.create_item("Carrot", assets.image`carrot`, "5"),
+    Inventory.create_item("Green bean seeds", assets.image`green bean seeds`, "1"),
+    Inventory.create_item("Green beans", assets.image`green beans`, "7"),
+    Inventory.create_item("Tomato seeds", assets.image`tomato seeds1`, "1"),
+    Inventory.create_item("Tomatoes", assets.image`tomatoes`, "10"),
+    Inventory.create_item("Broccoli seeds", assets.image`broccoli seeds`, "1"),
+    Inventory.create_item("Broccoli", assets.image`broccoli`, "13"),
+    Inventory.create_item("Luke", assets.image`Luke broccoli`, "100"),
+    Inventory.create_item("Pepper seeds", assets.image`pepper seeds`, "1"),
+    Inventory.create_item("Peppers", assets.image`peppers`, "18")
     ]
     plant_items_location_in_all_items_array = [
     4,
@@ -547,113 +546,113 @@ function selected_tile_code () {
         highlighted_tile_sprite.setFlag(SpriteFlag.Invisible, true)
     }
 }
-/**
- * 0 = carrots
- * 
- * 1 = green beans
- * 
- * 2 = tomatoes
- * 
- * 3 = broccoli
- * 
- * 4 = peppers
- */
-/**
- * first = type
- * 
- * ,
- * 
- * second# = grow cycles
- * 
- * ,
- * 
- * third# = last day watered
- * 
- * ,
- * 
- * coordinates
- * 
- * ,
- * 
- * stage
- */
-function grow () {
-    for (let value of sprites.allOfKind(SpriteKind.plant)) {
-        if (sprites.readDataNumber(value, "last day watered") == day) {
-            sprites.changeDataNumberBy(value, "grow cycles", 1)
-        }
-        if (sprites.readDataNumber(value, "grow cycles") == plant_stage_instructions[sprites.readDataNumber(value, "type")][sprites.readDataNumber(value, "stage")]) {
-            sprites.changeDataNumberBy(value, "stage", 1)
-        }
-        if (sprites.readDataNumber(value, "type") == 0) {
-            value.setImage(plant_images_array2[sprites.readDataNumber(value, "type") * 4 + sprites.readDataNumber(value, "stage")])
-        } else {
-            value.setImage(plant_images_array2[sprites.readDataNumber(value, "type") * 4 + 0 + sprites.readDataNumber(value, "stage")])
-        }
-    }
-}
-function sell (num: number, inventory: boolean) {
-    if (inventory) {
-        inventory_items[num].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(inventory_items[num].get_text(ItemTextAttribute.Tooltip)) + -1))
-    } else {
-        toolbar_items[num].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(toolbar_items[num].get_text(ItemTextAttribute.Tooltip)) + -1))
-    }
-}
-sprites.onOverlap(SpriteKind.Player, SpriteKind.plant, function (sprite, otherSprite) {
-    if (inventory_not_open) {
-        if (controller.A.isPressed()) {
-            if (!(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)])) {
-                if (sprites.readDataNumber(otherSprite, "stage") >= 3) {
-                    if (inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]]) == -1) {
-                        if (toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]]) == -1) {
-                            temp_number = 0
-                            inventory_items.push(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]])
-                            inventory_items[inventory_items.length - 1].set_text(ItemTextAttribute.Tooltip, "1")
-                            toolbarinventory_update()
-                            sprites.destroy(otherSprite)
-                        } else {
-                            toolbar_items[toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]])].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(toolbar_items[toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]])].get_text(ItemTextAttribute.Tooltip)) + 1))
-                            sprites.destroy(otherSprite)
-                        }
-                    } else {
-                        inventory_items[inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]])].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(inventory_items[inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[sprites.readDataNumber(otherSprite, "type")]])].get_text(ItemTextAttribute.Tooltip)) + 1))
-                        sprites.destroy(otherSprite)
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (A_interact) {
+        if (inventory_not_open) {
+            if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
+                if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Hoe") {
+                    if (if_not_wall_or_floor()) {
+                        place_tile_facing(mySprite, assets.tile`myTile`, false)
                     }
-                    toolbarinventory_update()
+                } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Carrot Seeds") {
+                    plant_plant(0)
+                } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Green bean seeds") {
+                    plant_plant(1)
+                } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Tomato seeds") {
+                    plant_plant(2)
+                } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Broccoli seeds") {
+                    plant_plant(3)
+                } else if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Pepper seeds") {
+                    plant_plant(4)
+                } else {
+                	
                 }
             }
         }
     }
 })
-controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (!(selling)) {
-        toolbarinventory_update()
-        if (inventory_not_open) {
-            inventory_not_open = false
-        } else {
-            inventory_not_open = true
-            inventory.set_color(InventoryColorAttribute.InventorySelectedOutline, 1)
-            toolbar.set_color(ToolbarColorAttribute.BoxSelectedOutline, 8)
-            hotbar_selected = true
+function grow () {
+    for (let value2 of plant_on_tile_image_array) {
+        for (let value of tiles.getTilesByType(water_to_image(value2.clone()))) {
+            tiles.changeDataNumber(value, "grow cycles", 1)
+            if (tiles.readDataNumber(value, "grow cycles") == plant_stage_instructions[tiles.readDataNumber(value, "type")][tiles.readDataNumber(value, "stage")]) {
+                tiles.changeDataNumber(value, "stage", 1)
+            }
+            tiles.setTileAt(value, plant_on_tile_image_array[tiles.readDataNumber(value, "type") * 4 + tiles.readDataNumber(value, "stage")])
+        }
+    }
+}
+function sell (num: number, inventory: boolean) {
+    if (inventory) {
+        if (inventory_items[num]) {
+            if (parseFloat(inventory_items[num].get_text(ItemTextAttribute.Description)) >= 0) {
+                money += parseFloat(inventory_items[num].get_text(ItemTextAttribute.Description))
+                inventory_items[num].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(inventory_items[num].get_text(ItemTextAttribute.Tooltip)) + -1))
+                info.setScore(money)
+            }
         }
     } else {
-        inventory_not_open = true
-        inventory.set_color(InventoryColorAttribute.InventorySelectedOutline, 1)
-        toolbar.set_color(ToolbarColorAttribute.BoxSelectedOutline, 8)
-        hotbar_selected = true
+        if (toolbar_items[num]) {
+            if (parseFloat(toolbar_items[num].get_text(ItemTextAttribute.Description)) >= 0) {
+                money += parseFloat(toolbar_items[num].get_text(ItemTextAttribute.Description))
+                toolbar_items[num].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(toolbar_items[num].get_text(ItemTextAttribute.Tooltip)) + -1))
+                info.setScore(money)
+            }
+        }
     }
+}
+function plant_tile_harvest () {
+    if (inventory_not_open) {
+        if (controller.A.isPressed()) {
+            if (!(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)])) {
+                if (tiles.readDataNumber(mySprite.tilemapLocation(), "stage") >= 3) {
+                    if (inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]]) == -1) {
+                        if (toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]]) == -1) {
+                            temp_number = 0
+                            inventory_items.push(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]])
+                            inventory_items[inventory_items.length - 1].set_text(ItemTextAttribute.Tooltip, "1")
+                            toolbarinventory_update()
+                            tiles.setTileAt(mySprite.tilemapLocation(), assets.tile`myTile0`)
+                        } else {
+                            toolbar_items[toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]])].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(toolbar_items[toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]])].get_text(ItemTextAttribute.Tooltip)) + 1))
+                        }
+                    } else {
+                        inventory_items[inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]])].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(inventory_items[inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]])].get_text(ItemTextAttribute.Tooltip)) + 1))
+                        tiles.setTileAt(mySprite.tilemapLocation(), assets.tile`myTile0`)
+                    }
+                    tiles.setTileAt(mySprite.tilemapLocation(), assets.tile`myTile0`)
+                    toolbarinventory_update()
+                }
+            }
+        }
+    }
+}
+events.tileEvent(SpriteKind.Player, assets.tile`myTile12`, events.TileEvent.StartOverlapping, function (sprite) {
+    inventory_not_open = false
+    selling = true
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (!(inventory_not_open)) {
         switch_hotbarinventory()
     }
 })
+function water_tile_code () {
+    if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)]) {
+        if (toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Name) == "Watering Can") {
+            if (controller.A.isPressed()) {
+                for (let value of plant_on_tile_image_array) {
+                    if (tiles.tileAtLocationEquals(tile_selector_collision_sprite.tilemapLocation(), value)) {
+                        tiles.setDataNumber(tile_selector_collision_sprite.tilemapLocation(), "last day watered ", day)
+                        tiles.setTileAt(tile_selector_collision_sprite.tilemapLocation(), water_to_image(value.clone()))
+                    }
+                }
+            }
+        }
+    }
+}
 function if_not_wall_or_floor () {
     return !(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile1`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile2`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile3`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile4`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile5`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile7`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile8`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile9`)) && (!(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile6`)) && !(tiles.tileAtLocationEquals(highlighted_tile_sprite.tilemapLocation(), assets.tile`myTile14`))))))))))
 }
-events.tileEvent(SpriteKind.Player, assets.tile`myTile12`, events.TileEvent.StopOverlapping, function (sprite) {
-    selling = false
-})
 function make_plant_on_tile_image_array () {
     for (let value of plant_images_array2) {
         plant_on_tile_image_array.push(img`
@@ -739,19 +738,18 @@ function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
 let temp_image: Image = null
 let temp_number = 0
 let plant_items_location_in_all_items_array: number[] = []
-let selling = false
 let myMenu: miniMenu.MenuSprite = null
 let plant_names_array: string[] = []
-let hotbar_selected = false
 let plant_images_array2: Image[] = []
-let plant_sprite: Sprite = null
+let selling = false
+let hotbar_selected = false
 let tempreadvar: string[] = []
-let plant_not_on_tile = false
-let plant_data_array_of_arrays: number[][] = []
+let item_sell_values_array: number[] = []
+let money = 0
 let plant_on_tile_image_array: Image[] = []
-let myEffect: SpreadEffectData = null
 let A_interact = false
 let move = false
+let tile_selector_collision_sprite: Sprite = null
 let highlighted_tile_sprite: Sprite = null
 let inventory_items: Inventory.Item[] = []
 let inventory: Inventory.Inventory = null
@@ -849,7 +847,7 @@ highlighted_tile_sprite = sprites.create(img`
     f . . . . . . . . . . . . . . f 
     f f f f . . . . . . . . f f f f 
     `, SpriteKind.no_collisions)
-let tile_selector_collision_sprite = sprites.create(img`
+tile_selector_collision_sprite = sprites.create(img`
     f f f f f f f f f f f f f f f f 
     f f f f f f f f f f f f f f f f 
     f f f f f f f f f f f f f f f f 
@@ -870,7 +868,7 @@ let tile_selector_collision_sprite = sprites.create(img`
 tile_selector_collision_sprite.setFlag(SpriteFlag.Invisible, true)
 move = true
 A_interact = true
-myEffect = extraEffects.createCustomSpreadEffectData(
+let myEffect = extraEffects.createCustomSpreadEffectData(
 [
 8,
 9,
@@ -878,8 +876,8 @@ myEffect = extraEffects.createCustomSpreadEffectData(
 ],
 false,
 extraEffects.createPresetSizeTable(ExtraEffectPresetShape.Spark),
-extraEffects.createPercentageRange(25, 30),
-extraEffects.createPercentageRange(25, 50),
+extraEffects.createPercentageRange(0, 25),
+extraEffects.createPercentageRange(0, 35),
 extraEffects.createTimeRange(200, 400)
 )
 make_plant_names_array()
@@ -889,8 +887,13 @@ inventory.get_items()[3].set_text(ItemTextAttribute.Tooltip, "10")
 inventory.get_items()[4].set_text(ItemTextAttribute.Tooltip, "10")
 inventory.get_items()[5].set_text(ItemTextAttribute.Tooltip, "10")
 plant_on_tile_image_array = []
-plant_data_array_of_arrays = []
+let plant_data_array_of_arrays: number[] = []
 make_plant_on_tile_image_array()
+money = 0
+forever(function () {
+    water_tile_code()
+    plant_tile_harvest()
+})
 forever(function () {
     inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
     menu_movement_code()
