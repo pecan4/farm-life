@@ -4,17 +4,6 @@ namespace SpriteKind {
     export const tile_selector = SpriteKind.create()
 }
 /**
- * 0 = carrots
- * 
- * 1 = green beans
- * 
- * 2 = tomatoes
- * 
- * 3 = broccoli
- * 
- * 4 = peppers
- */
-/**
  * first = type
  * 
  * ,
@@ -33,24 +22,17 @@ namespace SpriteKind {
  * 
  * stage
  */
-function make_item_sell_values_array () {
-    item_sell_values_array = [
-    -1,
-    1,
-    -1,
-    -1,
-    5,
-    1,
-    7,
-    1,
-    10,
-    1,
-    13,
-    100,
-    1,
-    18
-    ]
-}
+/**
+ * 0 = carrots
+ * 
+ * 1 = green beans
+ * 
+ * 2 = tomatoes
+ * 
+ * 3 = broccoli
+ * 
+ * 4 = peppers
+ */
 function plant_plant (num: number) {
     timer.background(function () {
         if (1 <= parseFloat(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Tooltip))) {
@@ -606,24 +588,29 @@ function plant_tile_harvest () {
         if (controller.A.isPressed()) {
             if (!(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)])) {
                 if (tiles.readDataNumber(mySprite.tilemapLocation(), "stage") >= 3) {
-                    if (inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]]) == -1) {
-                        if (toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]]) == -1) {
+                    location = mySprite.tilemapLocation()
+                    if (inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(location, "type")]]) == -1) {
+                        if (toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(location, "type")]]) == -1) {
                             temp_number = 0
-                            inventory_items.push(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]])
+                            inventory_items.push(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(location, "type")]])
                             inventory_items[inventory_items.length - 1].set_text(ItemTextAttribute.Tooltip, "1")
                             toolbarinventory_update()
-                            tiles.setTileAt(mySprite.tilemapLocation(), assets.tile`myTile0`)
+                            tiles.setTileAt(location, assets.tile`myTile0`)
+                            tiles.cleanseData(location)
                         } else {
-                            toolbar_items[toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]])].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(toolbar_items[toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]])].get_text(ItemTextAttribute.Tooltip)) + 1))
+                            toolbar_items[toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(location, "type")]])].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(toolbar_items[toolbar_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(location, "type")]])].get_text(ItemTextAttribute.Tooltip)) + 1))
                         }
                     } else {
-                        inventory_items[inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]])].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(inventory_items[inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(mySprite.tilemapLocation(), "type")]])].get_text(ItemTextAttribute.Tooltip)) + 1))
-                        tiles.setTileAt(mySprite.tilemapLocation(), assets.tile`myTile0`)
+                        inventory_items[inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(location, "type")]])].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(inventory_items[inventory_items.indexOf(all_items[plant_items_location_in_all_items_array[tiles.readDataNumber(location, "type")]])].get_text(ItemTextAttribute.Tooltip)) + 1))
+                        tiles.setTileAt(location, assets.tile`myTile0`)
+                        tiles.cleanseData(location)
                     }
-                    tiles.setTileAt(mySprite.tilemapLocation(), assets.tile`myTile0`)
+                    tiles.setTileAt(location, assets.tile`myTile0`)
+                    tiles.cleanseData(location)
                     toolbarinventory_update()
                 }
             }
+            pauseUntil(() => !(controller.A.isPressed()))
         }
     }
 }
@@ -737,6 +724,7 @@ function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
 }
 let temp_image: Image = null
 let temp_number = 0
+let location: tiles.Location = null
 let plant_items_location_in_all_items_array: number[] = []
 let myMenu: miniMenu.MenuSprite = null
 let plant_names_array: string[] = []
@@ -744,7 +732,6 @@ let plant_images_array2: Image[] = []
 let selling = false
 let hotbar_selected = false
 let tempreadvar: string[] = []
-let item_sell_values_array: number[] = []
 let money = 0
 let plant_on_tile_image_array: Image[] = []
 let A_interact = false
