@@ -3,36 +3,6 @@ namespace SpriteKind {
     export const no_collisions = SpriteKind.create()
     export const tile_selector = SpriteKind.create()
 }
-/**
- * first = type
- * 
- * ,
- * 
- * second# = grow cycles
- * 
- * ,
- * 
- * third# = last day watered
- * 
- * ,
- * 
- * coordinates
- * 
- * ,
- * 
- * stage
- */
-/**
- * 0 = carrots
- * 
- * 1 = green beans
- * 
- * 2 = tomatoes
- * 
- * 3 = broccoli
- * 
- * 4 = peppers
- */
 function plant_plant (num: number) {
     timer.background(function () {
         if (1 <= parseFloat(toolbar.get_items()[toolbar.get_number(ToolbarNumberAttribute.SelectedIndex)].get_text(ItemTextAttribute.Tooltip))) {
@@ -182,24 +152,7 @@ events.tileEvent(SpriteKind.Player, assets.tile`myTile14`, events.TileEvent.Star
 })
 function create_all_items_array () {
     all_items = [
-    Inventory.create_item("Hoe", img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . f f f f f f f f f f . . 
-        . . . . f f f f f f f f 7 f . . 
-        . . . . f f f f f f f f f f . . 
-        . . . . . . . . . . 7 7 7 . . . 
-        . . . . . . . . . 7 7 7 . . . . 
-        . . . . . . . . 7 7 7 . . . . . 
-        . . . . . . . 7 7 7 . . . . . . 
-        . . . . . . 7 7 7 . . . . . . . 
-        . . . . . 7 7 7 . . . . . . . . 
-        . . . . 7 7 7 . . . . . . . . . 
-        . . . 7 7 7 . . . . . . . . . . 
-        . . 7 7 7 . . . . . . . . . . . 
-        . 7 7 7 . . . . . . . . . . . . 
-        . . 7 . . . . . . . . . . . . . 
-        `, "-1"),
+    Inventory.create_item("Hoe", assets.image`Hoe`, "-1"),
     Inventory.create_item("Carrot Seeds", assets.image`carrot seeds`, "1"),
     Inventory.create_item("empty", img`
         . . . . . . . . . . . . . . . . 
@@ -237,6 +190,20 @@ function create_all_items_array () {
     8,
     10,
     12
+    ]
+    mini_menu_shop_items_array = [
+    miniMenu.createMenuItem("Carrot Seeds", assets.image`carrot seeds`),
+    miniMenu.createMenuItem("Green bean seeds", assets.image`green bean seeds`),
+    miniMenu.createMenuItem("Tomato seeds", assets.image`tomato seeds1`),
+    miniMenu.createMenuItem("Broccoli seeds", assets.image`broccoli seeds`),
+    miniMenu.createMenuItem("Pepper seeds", assets.image`pepper seeds`)
+    ]
+    item_sell_values_array = [
+    3,
+    4,
+    3,
+    5,
+    7
     ]
 }
 function menu_movement_code () {
@@ -613,6 +580,52 @@ function sell (num: number, sell_from_inventory: boolean) {
     toolbar.update()
     inventory.update()
 }
+function shop (items: any[]) {
+    A_interact = false
+    move = false
+    shop_menu = miniMenu.createMenuFromArray(items)
+    myMenu.onButtonPressed(controller.A, function (selection, selectedIndex) {
+        temp_found_bool_var = false
+        for (let value of inventory_items) {
+            if (value.get_text(ItemTextAttribute.Name) == selection) {
+                temp_found_bool_var = true
+            } else {
+            	
+            }
+        }
+        pauseUntil(() => !(controller.A.isPressed()))
+    })
+}
+/**
+ * first = type
+ * 
+ * ,
+ * 
+ * second# = grow cycles
+ * 
+ * ,
+ * 
+ * third# = last day watered
+ * 
+ * ,
+ * 
+ * coordinates
+ * 
+ * ,
+ * 
+ * stage
+ */
+/**
+ * 0 = carrots
+ * 
+ * 1 = green beans
+ * 
+ * 2 = tomatoes
+ * 
+ * 3 = broccoli
+ * 
+ * 4 = peppers
+ */
 function plant_tile_harvest () {
     if (inventory_not_open) {
         if (controller.A.isPressed()) {
@@ -755,6 +768,10 @@ function place_tile_facing (mySprite: Sprite, myImage: Image, wall: boolean) {
 let temp_image: Image = null
 let temp_number = 0
 let location: tiles.Location = null
+let temp_found_bool_var = false
+let shop_menu: miniMenu.MenuSprite = null
+let item_sell_values_array: number[] = []
+let mini_menu_shop_items_array: miniMenu.MenuItem[] = []
 let plant_items_location_in_all_items_array: number[] = []
 let myMenu: miniMenu.MenuSprite = null
 let plant_names_array: string[] = []

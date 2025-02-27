@@ -204,6 +204,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "pepper seeds"
     },
+    "/@}S{kjGk_y%$YRiU)(]": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAHAAAAAAAAcHcAAAAAAAB3BwD/DwAAcHcAAP8PAAB3BwAA/w8AcHcAAAD/DwB3BwAAAP8PcHcAAAAA/w93BwAAAAD/f3cAAAAAAP9/BwAAAAAAf38AAAAAAAD/DwAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Hoe"
+    },
     "anim1": {
         "namespace": "myAnimations",
         "id": "anim1",
