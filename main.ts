@@ -124,7 +124,11 @@ function plant_images_array () {
 }
 controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
     if (!(selling)) {
-        toolbarinventory_update()
+        toolbar.set_items(toolbar_items)
+        inventory.set_items(inventory_items)
+        toolbar.update()
+        inventory.update()
+        pause(100)
         if (inventory_not_open) {
             inventory_not_open = false
         } else {
@@ -163,6 +167,10 @@ events.tileEvent(SpriteKind.Player, assets.tile`myTile14`, events.TileEvent.Star
     myMenu.setFlag(SpriteFlag.RelativeToCamera, true)
     myMenu.onButtonPressed(controller.A, function (selection, selectedIndex) {
         if (selectedIndex == 0) {
+            color.startFade(color.originalPalette, color.Black, 500)
+            color.pauseUntilFadeDone()
+            pause(100)
+            color.startFade(color.Black, color.originalPalette, 500)
             grow()
             day += 1
             tileUtil.replaceAllTiles(assets.tile`myTile10`, assets.tile`myTile`)
@@ -310,17 +318,15 @@ function menu_movement_code () {
                     }
                 } else {
                     sell(inventory.get_number(InventoryNumberAttribute.SelectedIndex), true)
+                    pause(100)
                 }
             }
         }
-        toolbarinventory_update()
     }
 }
 function toolbarinventory_update () {
     toolbar.set_items(toolbar_items)
     inventory.set_items(inventory_items)
-    toolbar.update()
-    inventory.update()
 }
 function character_animation () {
     characterAnimations.loopFrames(
@@ -553,6 +559,22 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         }
     }
 })
+function delete_items_with_0_tooltip () {
+    for (let value of toolbar.get_items()) {
+        if (value.get_text(ItemTextAttribute.Tooltip) == "0") {
+            toolbar_items.removeAt(toolbar.get_items().indexOf(value))
+        }
+    }
+    for (let value of inventory.get_items()) {
+        if (value.get_text(ItemTextAttribute.Tooltip) == "0") {
+            inventory_items.removeAt(inventory.get_items().indexOf(value))
+        }
+    }
+    toolbar.set_items(toolbar_items)
+    inventory.set_items(inventory_items)
+    toolbar.update()
+    inventory.update()
+}
 function grow () {
     for (let value2 of plant_on_tile_image_array) {
         for (let value of tiles.getTilesByType(water_to_image(value2.clone()))) {
@@ -564,24 +586,32 @@ function grow () {
         }
     }
 }
-function sell (num: number, inventory: boolean) {
-    if (inventory) {
+function sell (num: number, sell_from_inventory: boolean) {
+    if (sell_from_inventory) {
         if (inventory_items[num]) {
-            if (parseFloat(inventory_items[num].get_text(ItemTextAttribute.Description)) >= 0) {
+            if (parseFloat(inventory_items[num].get_text(ItemTextAttribute.Description)) >= 0 && parseFloat(inventory_items[num].get_text(ItemTextAttribute.Tooltip)) > 0) {
                 money += parseFloat(inventory_items[num].get_text(ItemTextAttribute.Description))
                 inventory_items[num].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(inventory_items[num].get_text(ItemTextAttribute.Tooltip)) + -1))
-                info.setScore(money)
+                if (inventory_items[num].get_text(ItemTextAttribute.Tooltip) == "0") {
+                    inventory_items.removeAt(num)
+                }
             }
         }
     } else {
         if (toolbar_items[num]) {
-            if (parseFloat(toolbar_items[num].get_text(ItemTextAttribute.Description)) >= 0) {
+            if (parseFloat(toolbar_items[num].get_text(ItemTextAttribute.Description)) >= 0 && parseFloat(toolbar_items[num].get_text(ItemTextAttribute.Tooltip)) > 0) {
                 money += parseFloat(toolbar_items[num].get_text(ItemTextAttribute.Description))
                 toolbar_items[num].set_text(ItemTextAttribute.Tooltip, convertToText(parseFloat(toolbar_items[num].get_text(ItemTextAttribute.Tooltip)) + -1))
-                info.setScore(money)
+                if (toolbar_items[num].get_text(ItemTextAttribute.Tooltip) == "0") {
+                    toolbar_items.removeAt(num)
+                }
             }
         }
     }
+    toolbar.set_items(toolbar_items)
+    inventory.set_items(inventory_items)
+    toolbar.update()
+    inventory.update()
 }
 function plant_tile_harvest () {
     if (inventory_not_open) {
@@ -732,7 +762,6 @@ let plant_images_array2: Image[] = []
 let selling = false
 let hotbar_selected = false
 let tempreadvar: string[] = []
-let money = 0
 let plant_on_tile_image_array: Image[] = []
 let A_interact = false
 let move = false
@@ -853,6 +882,10 @@ tile_selector_collision_sprite = sprites.create(img`
     f f f f f f f f f f f f f f f f 
     `, SpriteKind.tile_selector)
 tile_selector_collision_sprite.setFlag(SpriteFlag.Invisible, true)
+let day_text_sprite = fancyText.create("Day: " + day, 0, 15, fancyText.rounded_large)
+day_text_sprite.setFlag(SpriteFlag.RelativeToCamera, true)
+day_text_sprite.setPosition(0 + fancyText.getText(day_text_sprite).length * 6, 15)
+day_text_sprite.setFlag(SpriteFlag.Invisible, true)
 move = true
 A_interact = true
 let myEffect = extraEffects.createCustomSpreadEffectData(
@@ -876,15 +909,14 @@ inventory.get_items()[5].set_text(ItemTextAttribute.Tooltip, "10")
 plant_on_tile_image_array = []
 let plant_data_array_of_arrays: number[] = []
 make_plant_on_tile_image_array()
-money = 0
-forever(function () {
-    water_tile_code()
-    plant_tile_harvest()
-})
+let money = 0
 forever(function () {
     inventory.setFlag(SpriteFlag.Invisible, inventory_not_open)
     menu_movement_code()
     selected_tile_code()
     inventory_not_open_hotbar_code()
+    water_tile_code()
+    plant_tile_harvest()
     tiles.placeOnTile(tile_selector_collision_sprite, highlighted_tile_sprite.tilemapLocation())
+    pause(100)
 })

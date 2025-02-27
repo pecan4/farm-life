@@ -13,7 +13,8 @@
         "arcade-mini-menu": "github:riknoll/arcade-mini-menu#v0.0.1",
         "arcade-fancy-text": "github:riknoll/arcade-fancy-text#v0.1.1",
         "Extra Effects": "github:AlexSzeto/extra-effects#v3.1.0",
-        "tileData": "github:The-Code-Zone/Tile-Data-pxt-extension#2b02eb000bcc65dea0dc45a0fa8e4e47165643c1"
+        "tileData": "github:The-Code-Zone/Tile-Data-pxt-extension#2b02eb000bcc65dea0dc45a0fa8e4e47165643c1",
+        "Color Fading": "github:jwunderl/pxt-color#v0.2.3"
     },
     "files": [
         "main.blocks",
